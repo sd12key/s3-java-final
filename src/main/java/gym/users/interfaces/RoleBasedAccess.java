@@ -1,7 +1,5 @@
 package gym.users.interfaces;
 
-import java.util.Scanner;
-
-public interface RoleMenu {
+public interface RoleBasedAccess {
     abstract void showMenu();
 }

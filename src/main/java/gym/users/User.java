@@ -1,12 +1,12 @@
 package gym.users;
 
-import gym.users.interfaces.RoleMenu;
+import gym.users.interfaces.RoleBasedAccess;
 
 // This is the base class for all users in the gym management system.
 // It's an abstract class, meaning it cannot be instantiated directly.
 // It serves as a template for other user types (Admin, Trainer, Member).
 // It implements the RoleMenu interface, which defines methods for managing user roles and menus.
-public abstract class User implements RoleMenu {
+public abstract class User implements RoleBasedAccess {
     public static final String ROLE_ADMIN = "admin";
     public static final String ROLE_TRAINER = "trainer";
     public static final String ROLE_MEMBER = "member";
