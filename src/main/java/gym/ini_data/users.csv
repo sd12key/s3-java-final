@@ -1,0 +1,16 @@
+username,password,email,phone_number,address,role
+admin_john,admin123,john.admin@gym.com,7091234567,"101 Water St, St. John's, NL A1C 1A6",admin
+admin_sue,admin123,sue.admin@gym.com,7092345678,"202 Duckworth St, St. John's, NL A1C 1G5",admin
+trainer_anna,train123,anna.trainer@gym.com,7093456789,"303 George St, St. John's, NL A1C 1W8",trainer
+trainer_bob,train123,bob.trainer@gym.com,7094567890,"404 Signal Hill Rd, St. John's, NL A1C 5H2",trainer
+trainer_lisa,train123,lisa.trainer@gym.com,7095678901,"505 Topsail Rd, St. John's, NL A1E 2C2",trainer
+member_mike,pass123,mike.member@gym.com,7096789012,"606 Kenmount Rd, St. John's, NL A1B 3R2",member
+member_nina,pass123,nina.member@gym.com,7097890123,"707 Lemarchant Rd, St. John's, NL A1C 2H1",member
+member_raj,pass123,raj.member@gym.com,7098901234,"808 Freshwater Rd, St. John's, NL A1B 1C2",member
+member_zoe,pass123,zoe.member@gym.com,7099012345,"909 Empire Ave, St. John's, NL A1E 1W5",member
+member_omar,pass123,omar.member@gym.com,7099123456,"111 Blackmarsh Rd, St. John's, NL A1E 1T1",member
+member_li,pass123,li.member@gym.com,7099234567,"121 Portugal Cove Rd, St. John's, NL A1A 4Y5",member
+member_ivy,pass123,ivy.member@gym.com,7099345678,"131 Pennywell Rd, St. John's, NL A1C 2L3",member
+member_hugo,pass123,hugo.member@gym.com,7099456789,"141 Ropewalk Ln, St. John's, NL A1E 5T2",member
+member_clara,pass123,clara.member@gym.com,7099567890,"151 Newtown Rd, St. John's, NL A1C 3J9",member
+member_ella,pass123,ella.member@gym.com,7099678901,"161 Airport Heights Dr, St. John's, NL A1A 4Z7",member

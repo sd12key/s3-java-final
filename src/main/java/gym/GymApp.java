@@ -1,24 +1,40 @@
 package gym;
 
-import gym.users.childclasses.Admin;
-import gym.users.childclasses.Member;
-import gym.users.childclasses.Trainer;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import gym.database.DatabaseConnection;
+import gym.utilities.Utils;
 
 public class GymApp {
+
+    private static final int LINE_LENGTH = 70;
+
     public static void main(String[] args)  {
-        System.out.println("Welcome to the Gym Management System!");
-        Admin admin_1 = new Admin(1,"aaa","aaa","aaa","aaa","aaa");
-        Trainer trainer_1 = new Trainer(2,"bbb","bbb","bbb","bbb","bbb");
-        Member member_1 = new Member(3,"ccc","ccc","ccc","ccc","ccc");
-        System.out.println(admin_1);
-        admin_1.showMenu();
-        System.out.println();
-        System.out.println(trainer_1);
-        trainer_1.showMenu();
-        System.out.println();
-        System.out.println(member_1);
-        member_1.showMenu();
-        System.out.println();
+
+        Utils.print_title_message("WELCOME TO GYM APP", LINE_LENGTH, '*');
+
+        // Initialize database connection variable
+        Connection conn = null;
+
+        // Establish a connection to the database
+        try {
+            conn = DatabaseConnection.getConnection();
+        } catch (SQLException e) {
+            System.err.println(DatabaseConnection.SQL_ERROR_MESSAGE_CONN + ": " + e.getMessage());
+            return; 
+        }
+
+        System.out.println("--> Connected to the database successfully!");
+        System.err.println("    (" + conn.toString() + ")\n");
+
+        // Close the database connection
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println(DatabaseConnection.SQL_ERROR_MESSAGE_CLOSE + ": " + e.getMessage());
+        }
+        
     }
 
 }
