@@ -9,7 +9,7 @@ public class Admin extends User {
         super(id, username, password_hash, email, phone_number, address, User.ROLE_ADMIN);
     }
 
-    // Implementing the abstract method from RoleMenu interface
+    // Implementing the abstract method from RoleBasedAccess interface
     @Override
     public void showMenu() {
         System.out.println("=== Admin Menu ===");

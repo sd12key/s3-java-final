@@ -8,7 +8,7 @@ public class Member extends User{
         super(id, username, password_hash, email, phone_number, address, User.ROLE_MEMBER);
     }
 
-    // Implementing the abstract method from RoleMenu interface
+    // Implementing the abstract method from RoleBasedAccess interface
     @Override
     public void showMenu() {
         System.out.println("=== Member Menu ===");
