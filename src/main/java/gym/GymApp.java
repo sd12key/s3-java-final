@@ -18,22 +18,15 @@ public class GymApp {
         Connection conn = null;
 
         // Establish a connection to the database
-        try {
-            conn = DatabaseConnection.getConnection();
-        } catch (SQLException e) {
-            System.err.println(DatabaseConnection.SQL_ERROR_MESSAGE_CONN + ": " + e.getMessage());
-            return; 
-        }
-
+        conn = DatabaseConnection.getConnection();
         System.out.println("--> Connected to the database successfully!");
         System.err.println("    (" + conn.toString() + ")\n");
 
-        // Close the database connection
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            System.err.println(DatabaseConnection.SQL_ERROR_MESSAGE_CLOSE + ": " + e.getMessage());
-        }
+        conn = DatabaseConnection.ensureConnection(conn);
+        System.out.println("--> Re-connected to the database successfully!");
+        System.err.println("    (" + conn.toString() + ")\n");
+
+        DatabaseConnection.closeConnection(conn);
         
     }
 
