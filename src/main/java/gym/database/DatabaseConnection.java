@@ -7,18 +7,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
 
+import gym.database.SQLTemplates;
+import gym.database.DBConst;
+
+
 public class DatabaseConnection {
     private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String USER = "postgres";
     private static final String PASSWORD = "password";
-    private static final String SCHEMA = "gym_app";
-    private static final String SQL_CREATE_SCHEMA = "CREATE SCHEMA IF NOT EXISTS " + SCHEMA;
-    private static final String SQL_SET_SCHEMA = "SET search_path TO " + SCHEMA;
-    private static final String TABLE_USERS = "users";
-    private static final String TABLE_MEMBERSHIP_TYPES = "membership_types";
-    private static final String TABLE_MEMBERSHIPS = "memberships";
-    private static final String TABLE_WORKOUT_CLASSES = "workout_classes";
-
+    
     // Establishes a connection to the PostgreSQL database using JDBC.
     // It takes a boolean parameter to determine whether to exit the program on error.
     // If exit_on_error is true, the program will terminate if a connection cannot be established.
@@ -51,7 +48,8 @@ public class DatabaseConnection {
             if (conn == null || conn.isClosed() || !conn.isValid(2)) {
                 conn = getConnection(exit_on_error);
                 Statement stmt = createStatement(conn, exit_on_error);
-                executeStatement(stmt, SQL_SET_SCHEMA, exit_on_error);
+                executeStatement(stmt, SQLTemplates.SQL_SET_SCHEMA, exit_on_error);
+                closeStatement(stmt, exit_on_error);
             }
             return conn;
         } catch (SQLException e) {
@@ -132,6 +130,25 @@ public class DatabaseConnection {
     // Overloaded version with exit_on_error = true by default.
     public static PreparedStatement prepareStatement(Connection conn, String sql) {
         return prepareStatement(conn, sql, true);
+    }
+
+    // Creates a PreparedStatement for parameterized SQL queries that also returns generated keys.
+    public static PreparedStatement prepareStatementWithKeys(Connection conn, String sql, boolean exit_on_error) {
+        try {
+            return conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        } catch (SQLException e) {
+            System.err.println("Error preparing statement (with keys): " + sql);
+            System.err.println("*** Details: " + e.getMessage());
+            if (exit_on_error) {
+                System.exit(99);
+            }
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Overloaded version with exit_on_error = true by default.
+    public static PreparedStatement prepareStatementWithKeys(Connection conn, String sql) {
+        return prepareStatementWithKeys(conn, sql, true);
     }
 
     // Executes a SQL command using the provided Statement object.
@@ -231,6 +248,7 @@ public class DatabaseConnection {
     }
 
     // Retrieves the auto-generated key from the last executed statement.
+    // It assumes that the statement was created with the option to return generated keys.
     public static int getGeneratedKey(PreparedStatement ps) {
         try (ResultSet rs = ps.getGeneratedKeys()) {
             if (rs.next()) {
