@@ -1,11 +1,13 @@
 package gym.database;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.Date;
 
 import gym.database.SQLTemplates;
 import gym.database.DBConst;
@@ -112,26 +114,32 @@ public class DatabaseConnection {
         return createStatement(conn, true);
     }
 
+    // Advances the ResultSet cursor to the next row.
+    public static boolean rsNext(ResultSet rs, boolean exit_on_error) {
+        try {
+            return rs.next();
+        } catch (SQLException e) {
+            System.err.println("Error advancing ResultSet cursor: " + e.getMessage());
+            if (exit_on_error) System.exit(99);
+            throw new RuntimeException(e);
+        }
+    }
+    
+    // Overloaded method to advance the ResultSet cursor without the exit_on_error parameter.
+    public static boolean rsNext(ResultSet rs) {
+        return rsNext(rs, true);
+    }
+  
+    // Checks if a table is empty by executing a simple SELECT query with LIMIT 1.
     public static boolean isTableEmpty(Connection conn, String table_name, boolean exit_on_error) {
         String query = "SELECT 1 FROM " + table_name + " LIMIT 1";
-        Statement stmt = null;
-        ResultSet rs = null;
         conn = ensureConnection(conn, exit_on_error);
-        stmt = createStatement(conn, exit_on_error);
-        rs = executeQuery(stmt, query, exit_on_error);
-    
-        try {
-            return !rs.next();
-        } catch (SQLException e) {
-            System.err.println("Error checking if table is empty: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
-        } finally {
-            closeResultSet(rs, exit_on_error);
-            closeStatement(stmt, exit_on_error);
-        }
+        Statement stmt = createStatement(conn, exit_on_error);
+        ResultSet rs = executeQuery(stmt, query, exit_on_error);
+        boolean is_empty = !rsNext(rs, exit_on_error);
+        closeResultSet(rs, exit_on_error);
+        closeStatement(stmt, exit_on_error);
+        return is_empty;
     }
 
     // Overloaded method to check if a table is empty without the exit_on_error parameter.
@@ -139,7 +147,70 @@ public class DatabaseConnection {
     public static boolean isTableEmpty(Connection conn, String table_name) {
         return isTableEmpty(conn, table_name, true);
     }
+
+    // Retrieves a string value from the ResultSet for a given column name.
+    public static int rsGetInt(ResultSet rs, String column, boolean exit_on_error) {
+        try {
+            return rs.getInt(column);
+        } catch (SQLException e) {
+            System.err.println("Error retrieving int column [" + column + "]: " + e.getMessage());
+            if (exit_on_error) System.exit(99);
+            throw new RuntimeException(e);
+        }
+    }
     
+    // Overloaded method to retrieve a string value from the ResultSet without the exit_on_error parameter.
+    public static int rsGetInt(ResultSet rs, String column) {
+        return rsGetInt(rs, column, true);
+    }
+
+    // Retrieves a string value from the ResultSet for a given column name.
+    public static String rsGetString(ResultSet rs, String column, boolean exit_on_error) {
+        try {
+            return rs.getString(column);
+        } catch (SQLException e) {
+            System.err.println("Error retrieving string column [" + column + "]: " + e.getMessage());
+            if (exit_on_error) System.exit(99);
+            throw new RuntimeException(e);
+        }
+    }
+    
+    // Overloaded method to retrieve a string value from the ResultSet without the exit_on_error parameter.
+    public static String rsGetString(ResultSet rs, String column) {
+        return rsGetString(rs, column, true);
+    }
+
+    // Retrieves a BigDecimal value from the ResultSet for a given column name.
+    public static BigDecimal rsGetBigDecimal(ResultSet rs, String column, boolean exit_on_error) {
+        try {
+            return rs.getBigDecimal(column);
+        } catch (SQLException e) {
+            System.err.println("Error retrieving decimal column [" + column + "]: " + e.getMessage());
+            if (exit_on_error) System.exit(99);
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Overloaded method to retrieve a BigDecimal value from the ResultSet without the exit_on_error parameter.    
+    public static BigDecimal rsGetBigDecimal(ResultSet rs, String column) {
+        return rsGetBigDecimal(rs, column, true);
+    }
+
+    // Retrieves a Date value from the ResultSet for a given column name.
+    public static Date rsGetDate(ResultSet rs, String column, boolean exit_on_error) {
+        try {
+            return rs.getDate(column);
+        } catch (SQLException e) {
+            System.err.println("Error retrieving date column [" + column + "]: " + e.getMessage());
+            if (exit_on_error) System.exit(99);
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Overloaded method to retrieve a Date value from the ResultSet without the exit_on_error parameter.
+    public static Date rsGetDate(ResultSet rs, String column) {
+        return rsGetDate(rs, column, true);
+    }
 
     // Creates a PreparedStatement for parameterized SQL queries.
     // If exit_on_error is true, exits on failure. Otherwise, throws RuntimeException.
