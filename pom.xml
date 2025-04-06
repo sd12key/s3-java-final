@@ -12,6 +12,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.jar.skip>true</maven.jar.skip>
     </properties>
 
     <dependencies>
@@ -29,31 +30,80 @@
         </dependency>
     </dependencies>
 
+            
     <build>
-    <plugins>
-        <!-- run "mvn exec:java" -->
-        <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>3.1.0</version>
-        <configuration>
-            <mainClass>gym.GymApp</mainClass>
-        </configuration>
-        </plugin>
+        <plugins>
+            <!-- For running with mvn exec:java -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>gym.GymApp</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>drop-run</id>
+                        <configuration>
+                            <mainClass>gym.GymApp</mainClass>
+                            <arguments>
+                                <argument>--drop</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>drop-init-run</id>
+                        <configuration>
+                            <mainClass>gym.GymApp</mainClass>
+                            <arguments>
+                                <argument>--drop</argument>
+                                <argument>--init</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
 
-        <!-- create a package with runnable .jar -->
-        <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.3.0</version>
-        <configuration>
-            <archive>
-            <manifest>
-                <mainClass>gym.GymApp</mainClass>
-            </manifest>
-            </archive>
-        </configuration>
-        </plugin>
-    </plugins>
+                </executions>
+            </plugin>
+
+            <!-- Disable maven-jar-plugin's default execution -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase> <!-- Disable the default JAR creation -->
+                    </execution>
+                </executions>
+            </plugin>            
+
+            <!-- Only build the fat JAR (no thin JAR) -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <finalName>${project.artifactId}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <attach>false</attach> <!-- silence warnings -->
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>gym.GymApp</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>

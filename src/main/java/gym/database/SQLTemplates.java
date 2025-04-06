@@ -13,10 +13,6 @@ public class SQLTemplates {
         DBConst.Memberships.TABLE + ", " +
         DBConst.WorkoutClasses.TABLE + ";";
 
-    // I am not CASCADE delete anything here, will handle in the application logic
-    // cannot automatically delete memberships when the user id deleted, because it can be still active
-    // also, trainers when deleted should be checked for active membership as well
-    // workout classes is the only thing that can be ON CASCADE-deleted 
     public static final String SQL_CREATE_USERS_TABLE =
         "CREATE TABLE IF NOT EXISTS " + 
         DBConst.Users.TABLE + " (" +
@@ -39,13 +35,14 @@ public class SQLTemplates {
         DBConst.MembershipTypes.COST + " DECIMAL(8,2)" +
         ");";
 
+    // ON DELETE CASCADE is used here to automatically delete memberships when the user is deleted
     public static final String SQL_CREATE_MEMBERSHIPS_TABLE =
         "CREATE TABLE IF NOT EXISTS " + DBConst.Memberships.TABLE + " (" +
         DBConst.Memberships.ID + " SERIAL PRIMARY KEY, " +
         DBConst.Memberships.TYPE_ID + " INT NOT NULL REFERENCES " +
         DBConst.MembershipTypes.TABLE + "(" + DBConst.MembershipTypes.ID + "), " +
         DBConst.Memberships.MEMBER_ID + " INT NOT NULL REFERENCES " +
-        DBConst.Users.TABLE + "(" + DBConst.Users.ID + "), " +
+        DBConst.Users.TABLE + "(" + DBConst.Users.ID + ") ON DELETE CASCADE, " +
         DBConst.Memberships.PURCHASE_DATE + " DATE NOT NULL" +
         ");";
 

@@ -14,7 +14,7 @@ import gym.database.DBConst;
 public class DatabaseConnection {
     private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "password";
+    private static final String PASSWORD = "postgres";
     
     // Establishes a connection to the PostgreSQL database using JDBC.
     // It takes a boolean parameter to determine whether to exit the program on error.
@@ -39,27 +39,29 @@ public class DatabaseConnection {
         return getConnection(true);
     }
 
+    // Checks if the connection is invalid (null, closed, or not valid).
+    public static boolean isConnectionInvalid(Connection conn) {
+        try {
+            return conn == null || conn.isClosed() || !conn.isValid(2);
+        } catch (SQLException e) {
+            // if exception then the connection is indeed invalid
+            return true; 
+        }
+    }
+   
     // This method ensures that the connection is valid and not closed.
     // If the connection is closed (or invalid), it will create a new one.
     // I will not be reconnecting to the database on every query, but rather
     // checking if the connection is still valid and re-establishing it if necessary.
     public static Connection ensureConnection(Connection conn, boolean exit_on_error) {
-        try {
-            if (conn == null || conn.isClosed() || !conn.isValid(2)) {
-                conn = getConnection(exit_on_error);
-                Statement stmt = createStatement(conn, exit_on_error);
-                executeStatement(stmt, SQLTemplates.SQL_SET_SCHEMA, exit_on_error);
-                closeStatement(stmt, exit_on_error);
-            }
-            return conn;
-        } catch (SQLException e) {
-            System.err.println("Database communication error: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+        if (isConnectionInvalid(conn)) {
+            conn = getConnection(exit_on_error);
+            Statement stmt = createStatement(conn, exit_on_error);
+            executeStatement(stmt, SQLTemplates.SQL_SET_SCHEMA, exit_on_error);
+            closeStatement(stmt, exit_on_error);
         }
-    }
+        return conn;
+    }    
 
     // Overloaded method to ensure a connection without the exit_on_error parameter.
     // This method will call the ensureConnection method with exit_on_error=true.
@@ -71,18 +73,16 @@ public class DatabaseConnection {
     // Closes the connection safely, handling any SQL exceptions that may occur.
     // It takes a Connection object and a boolean parameter to determine whether to exit the program on error.
     public static void closeConnection(Connection conn, boolean exit_on_error) {
-        if (conn != null) {
-            try {
-                if (!conn.isClosed()) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Error closing database connection: " + e.getMessage());
-                if (exit_on_error) {
-                    System.exit(99);
-                }
-                throw new RuntimeException(e);
+        try {
+            if (!isConnectionInvalid(conn)) {
+                conn.close();
             }
+        } catch (SQLException e) {
+            System.err.println("Error closing database connection: " + e.getMessage());
+            if (exit_on_error) {
+                System.exit(99);
+            }
+            throw new RuntimeException(e);
         }
     }
 
@@ -111,6 +111,35 @@ public class DatabaseConnection {
     public static Statement createStatement(Connection conn) {
         return createStatement(conn, true);
     }
+
+    public static boolean isTableEmpty(Connection conn, String table_name, boolean exit_on_error) {
+        String query = "SELECT 1 FROM " + table_name + " LIMIT 1";
+        Statement stmt = null;
+        ResultSet rs = null;
+        conn = ensureConnection(conn, exit_on_error);
+        stmt = createStatement(conn, exit_on_error);
+        rs = executeQuery(stmt, query, exit_on_error);
+    
+        try {
+            return !rs.next();
+        } catch (SQLException e) {
+            System.err.println("Error checking if table is empty: " + e.getMessage());
+            if (exit_on_error) {
+                System.exit(99);
+            }
+            throw new RuntimeException(e);
+        } finally {
+            closeResultSet(rs, exit_on_error);
+            closeStatement(stmt, exit_on_error);
+        }
+    }
+
+    // Overloaded method to check if a table is empty without the exit_on_error parameter.
+    // This method will call the isTableEmpty method with exit_on_error=true.   
+    public static boolean isTableEmpty(Connection conn, String table_name) {
+        return isTableEmpty(conn, table_name, true);
+    }
+    
 
     // Creates a PreparedStatement for parameterized SQL queries.
     // If exit_on_error is true, exits on failure. Otherwise, throws RuntimeException.
