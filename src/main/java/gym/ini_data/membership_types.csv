@@ -1,9 +1,0 @@
-type,description,duration_in_months,cost
-member,1-month membership,1,50.0
-member,3-month membership,3,135.0
-member,6-month membership,6,250.0
-member,12-month membership,12,450.0
-trainer,1-month membership,1,35.0
-trainer,3-month membership,3,90.0
-trainer,6-month membership,6,170.0
-trainer,12-month membership,12,300.0

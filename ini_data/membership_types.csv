@@ -1,0 +1,9 @@
+user_role,type,description,duration_in_months,cost
+member,Monthly,1-month membership,1,50.0
+member,Quarterly,3-month membership,3,135.0
+member,Semiannual,6-month membership,6,250.0
+member,Annual,12-month membership,12,450.0
+trainer,Monthly,1-month membership,1,35.0
+trainer,Quarterly,3-month membership,3,90.0
+trainer,Semiannual,6-month membership,6,170.0
+trainer,Annual,12-month membership,12,300.0

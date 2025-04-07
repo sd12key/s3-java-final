@@ -37,6 +37,38 @@ public abstract class MembershipTypeDAO {
         return addNew(type, conn, true);
     }
 
+    public static int addNewAndReturnId(MembershipType type, Connection conn, boolean exit_on_error) {
+        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+    
+        try {
+            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_INSERT_MEMBERSHIP_TYPE_RETURN_ID, exit_on_error);
+            DatabaseConnection.psSetString(ps, 1, type.getUserRole(), exit_on_error);
+            DatabaseConnection.psSetString(ps, 2, type.getType(), exit_on_error);
+            DatabaseConnection.psSetString(ps, 3, type.getDescription(), exit_on_error);
+            DatabaseConnection.psSetInt(ps, 4, type.getDurationInMonths(), exit_on_error);
+            DatabaseConnection.psSetDouble(ps, 5, type.getCost(), exit_on_error);
+    
+            rs = DatabaseConnection.executeQuery(ps, exit_on_error);
+    
+            if (DatabaseConnection.rsNext(rs, exit_on_error)) {
+                return DatabaseConnection.rsGetInt(rs, DBConst.MembershipTypes.ID, exit_on_error);
+            }
+    
+        } finally {
+            DatabaseConnection.closeResultSet(rs, exit_on_error);
+            DatabaseConnection.closeStatement(ps, exit_on_error);
+        }
+    
+        return -1;
+    }
+
+    // overload method to exit on any error
+    public static int addNewAndReturnId(MembershipType type, Connection conn) {
+        return addNewAndReturnId(type, conn, true);
+    }
+
     // get membership type by id from the database
     public static MembershipType getById(int id, Connection conn, boolean exit_on_error) {
         conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
