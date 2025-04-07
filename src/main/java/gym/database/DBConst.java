@@ -24,6 +24,19 @@ public class DBConst {
         public static final String COST = "cost";
     }
 
+    // default data for membership types
+    public static final Object[][] MEMBERSHIP_TYPES_DATA = {
+        // user_role, type, description, duration_in_months, cost
+        {"member", "monthly", "1-month membership", 1, 50.0},
+        {"member", "quarterly", "3-month membership", 3, 135.0},
+        {"member", "semiannual", "6-month membership", 6, 250.0},
+        {"member", "annual", "12-month membership", 12, 450.0},
+        {"trainer", "monthly", "1-month membership", 1, 35.0},
+        {"trainer", "quarterly", "3-month membership", 3, 90.0},
+        {"trainer", "semiannual", "6-month membership", 6, 170.0},
+        {"trainer", "annual", "12-month membership", 12, 300.0}
+    };
+
     public static class Memberships {
         public static final String TABLE = "memberships";
         public static final String ID = "id";

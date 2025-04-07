@@ -1,6 +1,5 @@
 package gym.database;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,10 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.Date;
-
-import gym.database.SQLTemplates;
-import gym.database.DBConst;
-
 
 public class DatabaseConnection {
     private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
@@ -181,9 +176,9 @@ public class DatabaseConnection {
     }
 
     // Retrieves a BigDecimal value from the ResultSet for a given column name.
-    public static BigDecimal rsGetBigDecimal(ResultSet rs, String column, boolean exit_on_error) {
+    public static double rsGetDouble(ResultSet rs, String column, boolean exit_on_error) {
         try {
-            return rs.getBigDecimal(column);
+            return rs.getDouble(column);
         } catch (SQLException e) {
             System.err.println("Error retrieving decimal column [" + column + "]: " + e.getMessage());
             if (exit_on_error) System.exit(99);
@@ -192,8 +187,8 @@ public class DatabaseConnection {
     }
 
     // Overloaded method to retrieve a BigDecimal value from the ResultSet without the exit_on_error parameter.    
-    public static BigDecimal rsGetBigDecimal(ResultSet rs, String column) {
-        return rsGetBigDecimal(rs, column, true);
+    public static double rsGetDouble(ResultSet rs, String column) {
+        return rsGetDouble(rs, column, true);
     }
 
     // Retrieves a Date value from the ResultSet for a given column name.
@@ -210,6 +205,70 @@ public class DatabaseConnection {
     // Overloaded method to retrieve a Date value from the ResultSet without the exit_on_error parameter.
     public static Date rsGetDate(ResultSet rs, String column) {
         return rsGetDate(rs, column, true);
+    }
+
+    // Sets an int value in the PreparedStatement at the specified index.
+    public static void psSetInt(PreparedStatement ps, int index, int value, boolean exit_on_error) {
+        try {
+            ps.setInt(index, value);
+        } catch (SQLException e) {
+            System.err.println("Error setting int at index [" + index + "]: " + e.getMessage());
+            if (exit_on_error) System.exit(99);
+            throw new RuntimeException(e);
+        }
+    }
+    
+    // Overloaded method to set an int value in the PreparedStatement without the exit_on_error parameter.
+    public static void psSetInt(PreparedStatement ps, int index, int value) {
+        psSetInt(ps, index, value, true);
+    }
+    
+    // Sets a double value in the PreparedStatement at the specified index.
+    public static void psSetDouble(PreparedStatement ps, int index, double value, boolean exit_on_error) {
+        try {
+            ps.setDouble(index, value);
+        } catch (SQLException e) {
+            System.err.println("Error setting double at index [" + index + "]: " + e.getMessage());
+            if (exit_on_error) System.exit(99);
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Overloaded method to set a double value in the PreparedStatement without the exit_on_error parameter.
+    public static void psSetDouble(PreparedStatement ps, int index, double value) {
+        psSetDouble(ps, index, value, true);
+    }
+
+    // Sets a String value in the PreparedStatement at the specified index.
+    public static void psSetString(PreparedStatement ps, int index, String value, boolean exit_on_error) {
+        try {
+            ps.setString(index, value);
+        } catch (SQLException e) {
+            System.err.println("Error setting String at index [" + index + "]: " + e.getMessage());
+            if (exit_on_error) System.exit(99);
+            throw new RuntimeException(e);
+        }
+    }
+    
+    // Overloaded method to set a String value in the PreparedStatement without the exit_on_error parameter.
+    public static void psSetString(PreparedStatement ps, int index, String value) {
+        psSetString(ps, index, value, true);
+    }
+    
+    // Sets a Date value in the PreparedStatement at the specified index.
+    public static void psSetDate(PreparedStatement ps, int index, java.sql.Date value, boolean exit_on_error) {
+        try {
+            ps.setDate(index, value);
+        } catch (SQLException e) {
+            System.err.println("Error setting Date at index [" + index + "]: " + e.getMessage());
+            if (exit_on_error) System.exit(99);
+            throw new RuntimeException(e);
+        }
+    }
+    
+    // Overloaded method to set a Date value in the PreparedStatement without the exit_on_error parameter.    
+    public static void psSetDate(PreparedStatement ps, int index, java.sql.Date value) {
+        psSetDate(ps, index, value, true);
     }
 
     // Creates a PreparedStatement for parameterized SQL queries.
@@ -269,7 +328,6 @@ public class DatabaseConnection {
     public static void executeStatement(Statement stmt, String sql) {
         executeStatement(stmt, sql, true);
     }
-
 
     // Executes a SQL Query using the provided PreparedStatement object.
     public static ResultSet executeQuery(PreparedStatement stmt, boolean exit_on_error) {

@@ -1,10 +1,36 @@
 package gym.database;
 
-import gym.database.DBConst;
-
 public class SQLTemplates {
     public static final String SQL_CREATE_SCHEMA = "CREATE SCHEMA IF NOT EXISTS " + DBConst.SCHEMA;
     public static final String SQL_SET_SCHEMA = "SET search_path TO " + DBConst.SCHEMA;
+
+    public static final String SQL_CREATE_MEMBERSHIP_TYPES_TABLE =
+        "CREATE TABLE IF NOT EXISTS " + DBConst.MembershipTypes.TABLE + " (" +
+        DBConst.MembershipTypes.ID + " SERIAL PRIMARY KEY, " +
+        DBConst.MembershipTypes.USER_ROLE + " VARCHAR(20) NOT NULL, " +
+        DBConst.MembershipTypes.TYPE + " VARCHAR(50) NOT NULL UNIQUE, " +
+        DBConst.MembershipTypes.DESCRIPTION + " TEXT, " +
+        DBConst.MembershipTypes.DURATION_MONTHS + " INT, " +
+        DBConst.MembershipTypes.COST + " DECIMAL(8,2)" +
+        ");";
+
+    public static final String SQL_INSERT_MEMBERSHIP_TYPE =
+    "INSERT INTO " + DBConst.MembershipTypes.TABLE + " (" +
+    DBConst.MembershipTypes.USER_ROLE + ", " +
+    DBConst.MembershipTypes.TYPE + ", " +
+    DBConst.MembershipTypes.DESCRIPTION + ", " +
+    DBConst.MembershipTypes.DURATION_MONTHS + ", " +
+    DBConst.MembershipTypes.COST +
+    ") VALUES (?, ?, ?, ?)";
+
+    public static final String SQL_SELECT_MEMBERSHIP_TYPE_BY_ID =
+    "SELECT * FROM " + DBConst.MembershipTypes.TABLE + " WHERE " + DBConst.MembershipTypes.ID + " = ?";
+
+    public static final String SQL_SELECT_MEMBERSHIP_TYPE_BY_USER_ROLE =
+    "SELECT * FROM " + DBConst.MembershipTypes.TABLE + " WHERE " + DBConst.MembershipTypes.USER_ROLE +" = ?";
+    
+    public static final String SQL_SELECT_ALL_MEMBERSHIP_TYPES =
+    "SELECT * FROM " + DBConst.MembershipTypes.TABLE + " ORDER BY " + DBConst.MembershipTypes.ID;
 
     public static final String SQL_DROP_TABLES = 
         "DROP TABLE IF EXISTS " + 
@@ -23,16 +49,6 @@ public class SQLTemplates {
         DBConst.Users.PHONE_NUMBER + " VARCHAR(20), " +
         DBConst.Users.ADDRESS + " TEXT, " +
         DBConst.Users.ROLE + " VARCHAR(20) NOT NULL" +
-        ");";
-
-    public static final String SQL_CREATE_MEMBERSHIP_TYPES_TABLE =
-        "CREATE TABLE IF NOT EXISTS " + DBConst.MembershipTypes.TABLE + " (" +
-        DBConst.MembershipTypes.ID + " SERIAL PRIMARY KEY, " +
-        DBConst.MembershipTypes.USER_ROLE + " VARCHAR(20) NOT NULL, " +
-        DBConst.MembershipTypes.TYPE + " VARCHAR(50) NOT NULL UNIQUE, " +
-        DBConst.MembershipTypes.DESCRIPTION + " TEXT, " +
-        DBConst.MembershipTypes.DURATION_MONTHS + " INT, " +
-        DBConst.MembershipTypes.COST + " DECIMAL(8,2)" +
         ");";
 
     // ON DELETE CASCADE is used here to automatically delete memberships when the user is deleted

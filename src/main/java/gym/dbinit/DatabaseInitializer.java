@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.Statement;
 import gym.database.DatabaseConnection;
 import gym.database.SQLTemplates;
-import gym.database.DBConst;
 
 public class DatabaseInitializer {
     
