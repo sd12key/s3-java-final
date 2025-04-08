@@ -9,8 +9,9 @@ public class DBConst {
         public static final String USERNAME = "username";
         public static final String PASSWORD_HASH = "password_hash";
         public static final String EMAIL = "email";
-        public static final String PHONE_NUMBER = "phone_number";
+        public static final String FULL_NAME = "full_name";
         public static final String ADDRESS = "address";
+        public static final String PHONE_NUMBER = "phone_number";
         public static final String ROLE = "role"; // "admin", "trainer", "member"
     }
 

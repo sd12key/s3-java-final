@@ -41,7 +41,6 @@ public abstract class MembershipTypeDAO {
         conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
-    
         try {
             ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_INSERT_MEMBERSHIP_TYPE_RETURN_ID, exit_on_error);
             DatabaseConnection.psSetString(ps, 1, type.getUserRole(), exit_on_error);
@@ -49,19 +48,20 @@ public abstract class MembershipTypeDAO {
             DatabaseConnection.psSetString(ps, 3, type.getDescription(), exit_on_error);
             DatabaseConnection.psSetInt(ps, 4, type.getDurationInMonths(), exit_on_error);
             DatabaseConnection.psSetDouble(ps, 5, type.getCost(), exit_on_error);
-    
             rs = DatabaseConnection.executeQuery(ps, exit_on_error);
-    
             if (DatabaseConnection.rsNext(rs, exit_on_error)) {
                 return DatabaseConnection.rsGetInt(rs, DBConst.MembershipTypes.ID, exit_on_error);
+            } else {
+                if (exit_on_error) {
+                    System.err.println("MembershipType Insert failed: no ID returned.");
+                    System.exit(99);
+                }
+                return -1;
             }
-    
         } finally {
             DatabaseConnection.closeResultSet(rs, exit_on_error);
             DatabaseConnection.closeStatement(ps, exit_on_error);
         }
-    
-        return -1;
     }
 
     // overload method to exit on any error

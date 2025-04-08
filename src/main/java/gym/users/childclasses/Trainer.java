@@ -4,8 +4,13 @@ import gym.users.User;
 
 public class Trainer extends User{
     // Constructor for Trainer class
-    public Trainer(int id, String username, String password_hash, String email, String phone_number, String address) {
-        super(id, username, password_hash, email, phone_number, address, User.ROLE_TRAINER);
+    public Trainer(int id, String username, String password_hash, String email, String full_name, String address, String phone_number) {
+        super(id, username, password_hash, email, full_name,  address, phone_number, User.ROLE_TRAINER);
+    }
+
+    // Constructor for new Trainer (id is preset to 0)
+    public Trainer(String username, String password_hash, String email, String full_name, String address, String phone_number) {
+        super(username, password_hash, email, full_name, address, phone_number, User.ROLE_TRAINER);
     }
 
     // Implementing the abstract method from RoleBasedAccess interface
