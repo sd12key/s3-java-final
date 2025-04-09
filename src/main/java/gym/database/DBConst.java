@@ -3,6 +3,9 @@ package gym.database;
 public class DBConst {
     public static final String SCHEMA = "gym_app";
 
+    public static final String ADMIN_PIN_HASH = "admin_pin_hash"; // Placeholder for the actual hash of the admin PIN
+    public static final String TRAINER_PIN_HASH = "trainer_pin_hash"; // Placeholder for the actual hash of the trainer PIN
+
     public static class Users {
         public static final String TABLE = "users";
         public static final String ID = "id";

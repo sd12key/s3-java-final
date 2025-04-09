@@ -131,6 +131,38 @@ public class SQLTemplates {
         DBConst.Users.TABLE + "(" + DBConst.Users.ID + ") ON DELETE CASCADE" +
         ")";
 
+    public static final String SQL_INSERT_WORKOUT_CLASS =
+        "INSERT INTO " + DBConst.WorkoutClasses.TABLE + " (" +
+        DBConst.WorkoutClasses.TYPE + ", " +
+        DBConst.WorkoutClasses.DESCRIPTION + ", " +
+        DBConst.WorkoutClasses.TRAINER_ID + 
+        ") VALUES (?, ?, ?)";
+
+    public static final String SQL_INSERT_WORKOUT_CLASS_RETURN_ID =
+        SQL_INSERT_WORKOUT_CLASS + " RETURNING " + DBConst.WorkoutClasses.ID;
+
+    public static final String SQL_UPDATE_WORKOUT_CLASS_BY_ID =
+        "UPDATE " + DBConst.WorkoutClasses.TABLE + " SET " +
+        DBConst.WorkoutClasses.TYPE + " = ?, " +
+        DBConst.WorkoutClasses.DESCRIPTION + " = ?, " +
+        DBConst.WorkoutClasses.TRAINER_ID + " = ? " +
+        "WHERE " + DBConst.WorkoutClasses.ID + " = ?";
+
+    public static final String SQL_DELETE_WORKOUT_CLASS_BY_ID =
+        "DELETE FROM " + DBConst.WorkoutClasses.TABLE + 
+        " WHERE " + DBConst.WorkoutClasses.ID + " = ?";
+
+    public static final String SQL_SELECT_ALL_WORKOUT_CLASSES =
+        "SELECT * FROM " + DBConst.WorkoutClasses.TABLE + 
+        " ORDER BY " + DBConst.WorkoutClasses.ID;
+
+    public static final String SQL_SELECT_WORKOUT_CLASSES_BY_TRAINER_ID =
+        "SELECT * FROM " + DBConst.WorkoutClasses.TABLE + 
+        " WHERE " + DBConst.WorkoutClasses.TRAINER_ID + " = ?" +
+        " ORDER BY " + DBConst.WorkoutClasses.ID;        
+
+    
+    // ======== Drop all tables at once ========
     public static final String SQL_DROP_TABLES = 
         "DROP TABLE IF EXISTS " + 
         DBConst.Users.TABLE + ", " +

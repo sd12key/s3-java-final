@@ -106,11 +106,11 @@ public abstract class User implements RoleBasedAccess {
     // since this is an abstract class, we cannot instantiate it directly
     public static User create(int id, String username, String password_hash, String email, String full_name, String address, String phone_number, String role, boolean exit_on_error) {
         switch (role.toLowerCase()) {
-            case "member":
+            case ROLE_MEMBER:
                 return new Member(id, username, password_hash, email, full_name, address, phone_number);
-            case "trainer":
+            case ROLE_TRAINER:
                 return new Trainer(id, username, password_hash, email, full_name, address, phone_number);
-            case "admin":
+            case ROLE_ADMIN:
                 return new Admin(id, username, password_hash, email, full_name, address, phone_number);
             default:
                 if (exit_on_error) {
