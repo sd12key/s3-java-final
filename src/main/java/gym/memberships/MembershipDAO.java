@@ -22,7 +22,7 @@ public abstract class MembershipDAO {
             ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_INSERT_MEMBERSHIP, exit_on_error);
             DatabaseConnection.psSetInt(ps, 1, membership.getType().getId(), exit_on_error);
             DatabaseConnection.psSetInt(ps, 2, membership.getUser().getId(), exit_on_error);
-            DatabaseConnection.psSetDate(ps, 3, java.sql.Date.valueOf(membership.getPurchaseDate()), exit_on_error); // ✅
+            DatabaseConnection.psSetDate(ps, 3, java.sql.Date.valueOf(membership.getPurchaseDate()), exit_on_error); 
 
             int rows_inserted = DatabaseConnection.executeUpdate(ps, exit_on_error);
             return rows_inserted > 0;
@@ -45,7 +45,7 @@ public abstract class MembershipDAO {
             ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_INSERT_MEMBERSHIP_RETURN_ID, exit_on_error);
             DatabaseConnection.psSetInt(ps, 1, membership.getType().getId(), exit_on_error);
             DatabaseConnection.psSetInt(ps, 2, membership.getUser().getId(), exit_on_error);
-            DatabaseConnection.psSetDate(ps, 3, java.sql.Date.valueOf(membership.getPurchaseDate()), exit_on_error); // ✅
+            DatabaseConnection.psSetDate(ps, 3, java.sql.Date.valueOf(membership.getPurchaseDate()), exit_on_error);
 
             rs = DatabaseConnection.executeQuery(ps, exit_on_error);
             if (DatabaseConnection.rsNext(rs, exit_on_error)) {
