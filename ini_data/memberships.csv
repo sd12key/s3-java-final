@@ -1,4 +1,4 @@
-type_id,member_id,purchase_date
+type_id,user_id,purchase_date
 1,6,2025-01-05
 2,7,2023-07-11
 1,8,2024-09-20
