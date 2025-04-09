@@ -41,8 +41,8 @@ public class DBConst {
     public static class Memberships {
         public static final String TABLE = "memberships";
         public static final String ID = "id";
-        public static final String TYPE_ID = "type_id";       // FK → membership_types.id
-        public static final String MEMBER_ID = "member_id";   // FK → users.id
+        public static final String TYPE_ID = "type_id";  // FK → membership_types.id
+        public static final String USER_ID = "user_id";  // FK → users.id
         public static final String PURCHASE_DATE = "purchase_date";
     }
 

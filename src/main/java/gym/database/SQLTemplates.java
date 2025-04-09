@@ -94,10 +94,30 @@ public class SQLTemplates {
         DBConst.Memberships.ID + " SERIAL PRIMARY KEY, " +
         DBConst.Memberships.TYPE_ID + " INT NOT NULL REFERENCES " +
         DBConst.MembershipTypes.TABLE + "(" + DBConst.MembershipTypes.ID + "), " +
-        DBConst.Memberships.MEMBER_ID + " INT NOT NULL REFERENCES " +
+        DBConst.Memberships.USER_ID + " INT NOT NULL REFERENCES " +
         DBConst.Users.TABLE + "(" + DBConst.Users.ID + ") ON DELETE CASCADE, " +
         DBConst.Memberships.PURCHASE_DATE + " DATE NOT NULL" +
         ")";
+
+    // ======== Memberships table queries ========
+    public static final String SQL_INSERT_MEMBERSHIP =
+        "INSERT INTO " + DBConst.Memberships.TABLE + " (" +
+        DBConst.Memberships.TYPE_ID + ", " +
+        DBConst.Memberships.USER_ID + ", " +
+        DBConst.Memberships.PURCHASE_DATE + 
+        ") VALUES (?, ?, ?)";
+
+    public static final String SQL_INSERT_MEMBERSHIP_RETURN_ID =
+        SQL_INSERT_MEMBERSHIP + " RETURNING " + DBConst.Memberships.ID;
+
+    public static final String SQL_SELECT_ALL_MEMBERSHIPS =
+        "SELECT * FROM " + DBConst.Memberships.TABLE + 
+        " ORDER BY " + DBConst.Memberships.ID;
+
+    public static final String SQL_SELECT_MEMBERSHIPS_BY_USER_ID =
+        "SELECT * FROM " + DBConst.Memberships.TABLE + 
+        " WHERE " + DBConst.Memberships.USER_ID + " = ?" +
+        " ORDER BY " + DBConst.Memberships.ID;
 
     // ========= Workout classes table creation and data insertion ========
 
