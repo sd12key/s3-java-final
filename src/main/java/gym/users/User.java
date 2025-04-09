@@ -141,4 +141,9 @@ public abstract class User implements RoleBasedAccess {
         return "[" + this.id + ", " + this.role +"]: " + 
         this.username + " (" + this.full_name + ", " + this.email + ")";
     }
+
+    public String toStringNoId() {
+        return this.role + ": " + this.username + " (" + this.full_name + ", " + this.email + ")";
+    }
+
 }

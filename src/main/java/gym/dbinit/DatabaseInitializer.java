@@ -131,7 +131,7 @@ public class DatabaseInitializer {
                 String line = scanner.nextLine();
                 String[] parts = Utils.parse_csv(line);
     
-                System.out.println(parts.length + " parts: " + line);
+                // System.out.println(parts.length + " parts: " + line);
                 // Check if the line has the expected number of parts, skip if not
                 if (parts.length < 5) continue;
 
@@ -142,7 +142,7 @@ public class DatabaseInitializer {
                 double cost = Double.parseDouble(parts[4]);
     
                 MembershipType mt = new MembershipType(user_role, type, description, duration, cost);
-                System.out.println("Adding membership type: " + mt.toString());
+                // System.out.println("Adding membership type: " + mt.toString());
                 int added_md_id = MembershipTypeDAO.addNewReturnId(mt, conn);
                 if (added_md_id == -1) {
                     System.err.println("Failed to add membership type: " + mt.toString());
@@ -177,7 +177,7 @@ public class DatabaseInitializer {
             String line = scanner.nextLine();
             String[] parts = Utils.parse_csv(line);
 
-            System.out.println(parts.length + " parts: " + line);
+            // System.out.println(parts.length + " parts: " + line);
             if (parts.length < 7) continue;
 
             String username = parts[0];
@@ -196,12 +196,14 @@ public class DatabaseInitializer {
             
             // user cannot be instantiated, so use the static helper method to create it
             User user = User.create(username, password_hash, email, full_name, address, phone_number, role);
-            System.out.println("Adding user: " + user.toString());
-            if (!UserDAO.addNew(user, conn)) {
+            // System.out.println("Adding user: " + user.toString());
+            int added_user_id = UserDAO.addNewReturnId(user, conn);
+            if (added_user_id == -1) {
                 System.err.println("Failed to add user: " + user.toString());
                 System.exit(99);
             } else {
-                System.out.println("Added user: " + user.toString());
+                // Print the added user
+                System.out.println("Added user: [" + added_user_id + "] " + user.toStringNoId());
             }
         }
         } catch (Exception e) {
