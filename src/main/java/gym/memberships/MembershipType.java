@@ -38,6 +38,6 @@ public class MembershipType {
 
     @Override
     public String toString() {
-        return "[" + this.user_role + "] " + this.type + " (" + this.duration_in_months + "m, $" + this.cost + ")";
+        return "[" + this.id + ":"+ this.user_role + "] " + this.type + " (" + this.duration_in_months + "m, $" + this.cost + ")";
     }
 }

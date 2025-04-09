@@ -37,7 +37,7 @@ public abstract class MembershipTypeDAO {
         return addNew(type, conn, true);
     }
 
-    public static int addNewAndReturnId(MembershipType type, Connection conn, boolean exit_on_error) {
+    public static int addNewReturnId(MembershipType type, Connection conn, boolean exit_on_error) {
         conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -65,8 +65,8 @@ public abstract class MembershipTypeDAO {
     }
 
     // overload method to exit on any error
-    public static int addNewAndReturnId(MembershipType type, Connection conn) {
-        return addNewAndReturnId(type, conn, true);
+    public static int addNewReturnId(MembershipType type, Connection conn) {
+        return addNewReturnId(type, conn, true);
     }
 
     // get membership type by id from the database

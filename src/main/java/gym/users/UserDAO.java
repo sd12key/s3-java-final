@@ -32,8 +32,8 @@ public abstract class UserDAO {
         }
     }
     
-    public static void addNew(User user, Connection conn) {
-        addNew(user, conn, true);
+    public static boolean addNew(User user, Connection conn) {
+        return addNew(user, conn, true);
     }
 
     public static int addNewReturnId(User user, Connection conn, boolean exit_on_error) {
