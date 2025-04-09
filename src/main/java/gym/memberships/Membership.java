@@ -63,6 +63,11 @@ public class Membership {
         return this.purchase_date.plusMonths(this.type.getDurationInMonths());
     }
 
+    public boolean isExpired() {
+        LocalDate expirationDate = this.getExpirationDate();
+        return expirationDate != null && expirationDate.isBefore(LocalDate.now());
+    }
+
     @Override
     public String toString() {
         String status;
