@@ -1,8 +1,4 @@
 package gym.users;
-
-import gym.users.childclasses.Admin;
-import gym.users.childclasses.Member;
-import gym.users.childclasses.Trainer;
 import gym.users.interfaces.RoleBasedAccess;
 
 // This is the base class for all users in the gym management system.
@@ -101,41 +97,7 @@ public abstract class User implements RoleBasedAccess {
     public void setRole(String role) {
         this.role = role;
     }
-
-    // Method to create a new user based on the role
-    // since this is an abstract class, we cannot instantiate it directly
-    public static User create(int id, String username, String password_hash, String email, String full_name, String address, String phone_number, String role, boolean exit_on_error) {
-        switch (role.toLowerCase()) {
-            case ROLE_MEMBER:
-                return new Member(id, username, password_hash, email, full_name, address, phone_number);
-            case ROLE_TRAINER:
-                return new Trainer(id, username, password_hash, email, full_name, address, phone_number);
-            case ROLE_ADMIN:
-                return new Admin(id, username, password_hash, email, full_name, address, phone_number);
-            default:
-                if (exit_on_error) {
-                    System.err.println("Unknown role: " + role);
-                    System.exit(99);
-                }
-                return null;
-        }
-    }
-
-    // Overload method with default exit_on_error = true
-    public static User create(int id, String username, String password_hash, String email, String full_name, String address, String phone_number, String role) {
-        return create(id, username, password_hash, email, full_name, address, phone_number, role, true);
-    }
-
-    // overload method with id set to 0 (for new users)
-    public static User create(String username, String password_hash, String email, String full_name, String address, String phone_number, String role, boolean exit_on_error) {
-        return create(0, username, password_hash, email, full_name, address, phone_number, role, exit_on_error);
-    }
-
-    // Overload method with id set to 0 (for new users) and default exit_on_error = true
-    public static User create(String username, String password_hash, String email, String full_name, String address, String phone_number, String role) {
-        return create(username, password_hash, email, full_name, address, phone_number, role, true);    
-    }
-
+   
     @Override
     public String toString() {
         return "[" + this.id + ", " + this.role +"]: " + 
@@ -145,5 +107,10 @@ public abstract class User implements RoleBasedAccess {
     public String toStringNoId() {
         return this.role + ": " + this.username + " (" + this.full_name + ", " + this.email + ")";
     }
+
+    // abstract methods from the interface, to be implemented by subclasses
+    @Override
+    public abstract void showUserMenu();
+
 
 }

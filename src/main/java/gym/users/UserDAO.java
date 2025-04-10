@@ -7,10 +7,11 @@ import java.util.ArrayList;
 
 import gym.database.DatabaseConnection;
 import gym.database.SQLTemplates;
+import gym.users.childclasses.Trainer;
+import gym.users.interfaces.RoleBasedAccess;
 import gym.database.DBConst;
 
 public abstract class UserDAO {
-
 
     public static boolean addNew(User user, Connection conn, boolean exit_on_error) {
         conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
@@ -122,6 +123,19 @@ public abstract class UserDAO {
             DatabaseConnection.closeStatement(ps, exit_on_error);
         }
     }
+ 
+    public static Trainer getTrainerById(int trainer_id, Connection conn, boolean exitOnError) {
+        User user = getById(trainer_id, conn, exitOnError);
+        if (user == null || !user.getRole().equalsIgnoreCase(User.ROLE_TRAINER)) {
+            if (exitOnError) {
+                System.err.println("Invalid trainer ID: " + trainer_id);
+                System.exit(99);
+            }
+            return null;
+        }
+        // Cast to Trainer
+        return (Trainer) user;
+    }
 
     // overload method to exit on any error
     public static User getByUsername(String username, Connection conn) {
@@ -210,7 +224,6 @@ public abstract class UserDAO {
     public static boolean deleteById(int user_id, Connection conn) {
         return deleteById(user_id, conn, true);
     }
-    
 
     // build a User object from the ResultSet
     // this method is private to prevent direct access from outside the class
@@ -223,7 +236,14 @@ public abstract class UserDAO {
         String address = DatabaseConnection.rsGetString(rs, DBConst.Users.ADDRESS, exit_on_error);
         String phone_number = DatabaseConnection.rsGetString(rs, DBConst.Users.PHONE_NUMBER, exit_on_error);
         String role = DatabaseConnection.rsGetString(rs, DBConst.Users.ROLE, exit_on_error);
-
-        return User.create(id, username, password_hash, email, full_name, address, phone_number, role);
+        return RoleBasedAccess.createUser(id, username, password_hash, email, full_name, address, phone_number, role, exit_on_error);
     }
+
+    // overload method to exit on any error
+    public static User buildFromResultSet(ResultSet rs) {
+        return buildFromResultSet(rs, true);
+    }
+
+
+
 }

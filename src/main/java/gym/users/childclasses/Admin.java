@@ -16,7 +16,7 @@ public class Admin extends User {
 
     // Implementing the abstract method from RoleBasedAccess interface
     @Override
-    public void showMenu() {
+    public void showUserMenu() {
         System.out.println("=== Admin Menu ===");
         System.out.println("1. Create User");
         System.out.println("2. Delete User");

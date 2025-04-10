@@ -3,14 +3,16 @@ package gym;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import gym.database.DatabaseConnection;
 import gym.dbinit.DatabaseInitializer;
 import gym.utilities.Utils;
+import gym.menu.MenuService;
 
 public class GymApp {
 
-    private static final int LINE_LENGTH = 70;
+    private static final int SCREEN_WIDTH = 70;
 
     private static final String APP_USAGE = 
         "Valid arguments:\n" +
@@ -22,11 +24,12 @@ public class GymApp {
 
     public static void main(String[] args)  {
 
-        Utils.print_title_message("WELCOME TO GYM APP", LINE_LENGTH, '*');
+        Utils.print_title_message("WELCOME TO GYM APP", SCREEN_WIDTH, '*');
 
         Connection gymdb = DatabaseInitializer.databaseInit(processArg(args, DROP_ARG), processArg(args, INIT_ARG));
-               
-
+        
+        Scanner scanner = new Scanner(System.in);
+        MenuService.showMain(gymdb, scanner);
         
 
         DatabaseConnection.closeConnection(gymdb);

@@ -21,6 +21,7 @@ import gym.memberships.MembershipTypeDAO;
 import gym.users.User;
 import gym.users.UserDAO;
 import gym.users.childclasses.Trainer;
+import gym.users.interfaces.RoleBasedAccess;
 import gym.workoutclasses.WorkoutClass;
 import gym.workoutclasses.WorkoutClassDAO;
 import gym.utilities.Utils;
@@ -187,7 +188,6 @@ public class DatabaseInitializer {
             // Hash the password using BCrypt
             String password_hash = BCrypt.hashpw(plain_password, BCrypt.gensalt());
 
-
             String email = parts[2];
             String full_name = parts[3];
             String address = parts[4];
@@ -195,7 +195,7 @@ public class DatabaseInitializer {
             String role = parts[6];
             
             // user cannot be instantiated, so use the static helper method to create it
-            User user = User.create(username, password_hash, email, full_name, address, phone_number, role);
+            User user = RoleBasedAccess.createUser(username, password_hash, email, full_name, address, phone_number, role);
             // System.out.println("Adding user: " + user.toString());
             int added_user_id = UserDAO.addNewReturnId(user, conn);
             if (added_user_id == -1) {

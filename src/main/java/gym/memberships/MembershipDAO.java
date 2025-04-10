@@ -141,4 +141,10 @@ public abstract class MembershipDAO {
 
         return new Membership(id, type, user, purchase_date);
     }
+
+    // overloads to exit on any error
+    public static Membership buildFromResultSet(ResultSet rs, Connection conn) {
+        return buildFromResultSet(rs, conn, true);
+    }
+
 }

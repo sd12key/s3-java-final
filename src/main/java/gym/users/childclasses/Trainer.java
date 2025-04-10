@@ -15,7 +15,7 @@ public class Trainer extends User{
 
     // Implementing the abstract method from RoleBasedAccess interface
     @Override
-    public void showMenu() {
+    public void showUserMenu() {
         System.out.println("=== Trainer Menu ===");
         System.out.println("1. View Workout Classes");
         System.out.println("2. Create Workout Class");

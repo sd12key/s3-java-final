@@ -19,10 +19,16 @@ public class Utils {
         return Character.toString(symbol).repeat(length);
     }
 
-    public static void print_title_message(String message, int line_length, char symbol) {
-        System.out.println("\n" + symbol_line(symbol, line_length));
-        System.out.println(symbol + center_string(message, line_length - 2) + symbol);
-        System.out.println(symbol_line(symbol, line_length) + "\n");
+    public static void print_title_message(String message, int message_length, char symbol) {
+        print_title_message(message, message_length, symbol, message_length);
+    }
+
+    public static void print_title_message(String message, int message_length, char symbol, int screen_width) {
+        System.out.println();
+        System.out.println(center_string(symbol_line(symbol, message_length), screen_width));
+        System.out.println(center_string(symbol + center_string(message, message_length - 2) + symbol, screen_width));
+        System.out.println(center_string(symbol_line(symbol, message_length), screen_width));
+        System.out.println();
     }
 
     // This method parses a CSV line and returns an array of strings.

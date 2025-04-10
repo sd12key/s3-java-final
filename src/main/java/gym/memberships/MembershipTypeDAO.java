@@ -164,4 +164,9 @@ public abstract class MembershipTypeDAO {
         double cost = DatabaseConnection.rsGetDouble(rs, DBConst.MembershipTypes.COST, exit_on_error);
         return new MembershipType(id, user_role, type, description, duration, cost);
     }
+
+    // overload method to exit on any error
+    public static MembershipType buildFromResultSet(ResultSet rs) {
+        return buildFromResultSet(rs, true);
+    }
 }
