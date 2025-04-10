@@ -3,6 +3,8 @@ package gym.utilities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class Utils {
     // This method takes a string and a length, and returns the string centered within the specified length.
     // If the string is longer than the specified length, it truncates the string to fit.
@@ -55,4 +57,21 @@ public class Utils {
         csv_line_parts.add(current_field.trim());
         return csv_line_parts.toArray(new String[0]);
     }
+
+    public static String hash_password(String plain_password) {
+        return BCrypt.hashpw(plain_password, BCrypt.gensalt());
+    }
+    
+    public static boolean check_password(String plain_password, String hashed_password) {
+        return BCrypt.checkpw(plain_password, hashed_password);
+    }
+
+    public static boolean password_hashes_equal(String hashed_password_1, String hashed_password_2) {
+        return hashed_password_1.equals(hashed_password_2);
+    }
+
+    public static boolean passwords_equal(String password_1, String password_2) {
+        return password_1.equals(password_2);
+    }
+
 }

@@ -37,29 +37,26 @@ public class DatabaseInitializer {
         "workout_classes.csv"
     };
 
-    public static Connection databaseInit(boolean drop_tables, boolean initialize_from_csv) {
+    public static void databaseInit(boolean drop_tables, boolean initialize_from_csv) {
         // Establish a connection to the database
         Connection conn = DatabaseConnection.getConnection();
         System.out.println("--> Connected to the database successfully!");
         System.err.println("    (" + conn.toString() + ")\n");
 
-        // Set the schema for the connection
-        setSchema(conn);
-
         // Drop the tables if --drop is specified
-        if (drop_tables) { dropTables(conn); }
+        if (drop_tables) { dropTables(); }
 
         // Create the tables in the database (if they don't exist)
-        createTables(conn);
+        createTables();
 
         if (initialize_from_csv) {
             // If --drop and --init are both specified, initialize from CSV files
             System.out.println("--> Initializing database from CSV files...\n");
             try {
-                loadUsersFromCSV(conn, CSV_FOLDER.resolve(CSV_FILES[0]));
-                loadMembershipTypesFromCSV(conn, CSV_FOLDER.resolve(CSV_FILES[1]));
-                loadMembershipsFromCSV(conn, CSV_FOLDER.resolve(CSV_FILES[2]));
-                loadWorkoutClassesFromCSV(conn, CSV_FOLDER.resolve(CSV_FILES[3]));
+                loadUsersFromCSV(CSV_FOLDER.resolve(CSV_FILES[0]));
+                loadMembershipTypesFromCSV(CSV_FOLDER.resolve(CSV_FILES[1]));
+                loadMembershipsFromCSV(CSV_FOLDER.resolve(CSV_FILES[2]));
+                loadWorkoutClassesFromCSV(CSV_FOLDER.resolve(CSV_FILES[3]));
             } catch (Exception e) {
                 System.err.println("Error loading membership types from CSV: " + e.getMessage());
                 System.exit(99);
@@ -77,33 +74,21 @@ public class DatabaseInitializer {
 
                 MembershipType mt = new MembershipType(user_role, type, description, duration, cost);
                 System.out.println("Adding membership type: " + mt.toString());
-                MembershipTypeDAO.addNew(mt, conn);
+                MembershipTypeDAO.addNew(mt);
             }
             System.out.println("--> Initialized membership_types table with default values!\n");
         } 
 
-        List<MembershipType> types = MembershipTypeDAO.getAll(conn);
+        List<MembershipType> types = MembershipTypeDAO.getAll();
         System.out.println("=== All Membership Types in the Database ===");
         for (MembershipType mt : types) {
             System.out.println(mt);
         }
-
-               
-        return conn;
     }
 
-    public static void setSchema(Connection conn) {
-        Statement stmt = DatabaseConnection.createStatement(conn);
-        DatabaseConnection.executeStatement(stmt, SQLTemplates.SQL_CREATE_SCHEMA);
-        System.out.println("--> Created schema " + DBConst.SCHEMA + " successfully!\n");
-        DatabaseConnection.executeStatement(stmt, SQLTemplates.SQL_SET_SCHEMA);
-        System.out.println("--> Set schema " + DBConst.SCHEMA + " successfully!\n");
-        DatabaseConnection.closeStatement(stmt);
-    }
-
-    private static void createTables(Connection conn) {
-        conn = DatabaseConnection.ensureConnection(conn);
-        Statement stmt = DatabaseConnection.createStatement(conn);
+    private static void createTables() {
+        DatabaseConnection.getConnection();
+        Statement stmt = DatabaseConnection.createStatement();
         DatabaseConnection.executeStatement(stmt, SQLTemplates.SQL_CREATE_USERS_TABLE);
         DatabaseConnection.executeStatement(stmt, SQLTemplates.SQL_CREATE_MEMBERSHIP_TYPES_TABLE);
         DatabaseConnection.executeStatement(stmt, SQLTemplates.SQL_CREATE_MEMBERSHIPS_TABLE);
@@ -112,15 +97,15 @@ public class DatabaseInitializer {
         System.out.println("--> Created all tables successfully!\n");
     }
 
-    private static void dropTables(Connection conn) {
-        conn = DatabaseConnection.ensureConnection(conn);
-        Statement stmt = DatabaseConnection.createStatement(conn);
+    private static void dropTables() {
+        DatabaseConnection.getConnection();
+        Statement stmt = DatabaseConnection.createStatement();
         DatabaseConnection.executeStatement(stmt, SQLTemplates.SQL_DROP_TABLES);
         DatabaseConnection.closeStatement(stmt);
         System.out.println("--> Dropped all tables successfully!\n");
     }
 
-    private static void loadMembershipTypesFromCSV(Connection conn, Path path) throws Exception {
+    private static void loadMembershipTypesFromCSV(Path path) throws Exception {
         Scanner scanner = null;
         try {
             scanner = new Scanner(new FileReader(path.toFile()));
@@ -144,7 +129,7 @@ public class DatabaseInitializer {
     
                 MembershipType mt = new MembershipType(user_role, type, description, duration, cost);
                 // System.out.println("Adding membership type: " + mt.toString());
-                int added_md_id = MembershipTypeDAO.addNewReturnId(mt, conn);
+                int added_md_id = MembershipTypeDAO.addNewReturnId(mt);
                 if (added_md_id == -1) {
                     System.err.println("Failed to add membership type: " + mt.toString());
                     System.exit(99);
@@ -165,7 +150,7 @@ public class DatabaseInitializer {
         }
     }
 
-    private static void loadUsersFromCSV(Connection conn, Path path) throws Exception {
+    private static void loadUsersFromCSV(Path path) throws Exception {
     Scanner scanner = null;
     try {
         scanner = new Scanner(new FileReader(path.toFile()));
@@ -197,7 +182,7 @@ public class DatabaseInitializer {
             // user cannot be instantiated, so use the static helper method to create it
             User user = RoleBasedAccess.createUser(username, password_hash, email, full_name, address, phone_number, role);
             // System.out.println("Adding user: " + user.toString());
-            int added_user_id = UserDAO.addNewReturnId(user, conn);
+            int added_user_id = UserDAO.addNewReturnId(user);
             if (added_user_id == -1) {
                 System.err.println("Failed to add user: " + user.toString());
                 System.exit(99);
@@ -217,7 +202,7 @@ public class DatabaseInitializer {
         }
     }
 
-    private static void loadMembershipsFromCSV(Connection conn, Path path) throws Exception {
+    private static void loadMembershipsFromCSV(Path path) throws Exception {
         Scanner scanner = null;
         try {
             scanner = new Scanner(new FileReader(path.toFile()));
@@ -239,8 +224,8 @@ public class DatabaseInitializer {
                 LocalDate purchase_date = LocalDate.parse(parts[2]);
 
                 // create membershiptype and user objects
-                MembershipType type = MembershipTypeDAO.getById(type_id, conn);
-                User user = UserDAO.getById(user_id, conn);
+                MembershipType type = MembershipTypeDAO.getById(type_id);
+                User user = UserDAO.getById(user_id);
                 
                 if (type == null || user == null) {
                     System.err.println("Error: Could not find referenced type or user");
@@ -253,7 +238,7 @@ public class DatabaseInitializer {
                 // create membership object and add to database
                 Membership membership = new Membership(type, user, purchase_date);
                 System.out.println("Adding membership: " + membership.toString());
-                if (!MembershipDAO.addNew(membership, conn)) {
+                if (!MembershipDAO.addNew(membership)) {
                     System.err.println("Failed to add membership: " + membership.toString());
                     System.exit(99);
                 } else {
@@ -271,7 +256,7 @@ public class DatabaseInitializer {
         }
     }    
 
-    private static void loadWorkoutClassesFromCSV(Connection conn, Path path) throws Exception {
+    private static void loadWorkoutClassesFromCSV(Path path) throws Exception {
         Scanner scanner = null;
         try {
             scanner = new Scanner(new FileReader(path.toFile()));
@@ -293,7 +278,7 @@ public class DatabaseInitializer {
                 int trainerId = Integer.parseInt(parts[2]);
 
                 // Fetch trainer from database
-                Trainer trainer = (Trainer) UserDAO.getById(trainerId, conn);
+                Trainer trainer = (Trainer) UserDAO.getById(trainerId);
                 
                 if (trainer == null) {
                     System.err.println("Error: Could not find trainer with ID " + trainerId);
@@ -306,7 +291,7 @@ public class DatabaseInitializer {
                 // create workout class object and add to database
                 WorkoutClass workoutClass = new WorkoutClass(type, description, trainer);
                 System.out.println("Adding workout class: " + workoutClass.toString());
-                if(!WorkoutClassDAO.addNew(workoutClass, conn)) {
+                if(!WorkoutClassDAO.addNew(workoutClass)) {
                     System.err.println("Failed to add workout class: " + workoutClass.toString());
                     System.exit(99);
                 } else {

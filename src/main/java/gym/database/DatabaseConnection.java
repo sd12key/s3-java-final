@@ -8,26 +8,69 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.Date;
 
-public class DatabaseConnection {
+public final class DatabaseConnection {
+
+    // JDBC connection object
+    // I want to have only one instance of the connection object.
+    private static Connection conn = null;
+    // This boolean will be used to check if the schema has been created or not.
+    // It will be set to true after the schema is created.
+    // This will prevent the schema from being created multiple times.
+    // not really nesseccasy, because SQL will ignore the create statement if the schema already exists.
+    private static boolean schema_created = false;
+
     private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String USER = "postgres";
     private static final String PASSWORD = "postgres";
+
+    // Helper method for error handling
+    private static void handleError(String error_msg, SQLException e, boolean exit_on_error) {
+        System.err.println(error_msg + ": " + e.getMessage());
+        if (exit_on_error) {
+            System.exit(99);
+        }
+        throw new RuntimeException(error_msg, e);
+    }
     
+    private static void createSchema(boolean exit_on_error) {
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.execute(SQLTemplates.SQL_CREATE_SCHEMA);
+            stmt.close();
+        } catch (SQLException e) {
+            handleError("Error creating schema", e, exit_on_error);
+        }
+    }
+
+    private static void setSchema(boolean exit_on_error) {
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.execute(SQLTemplates.SQL_SET_SCHEMA);
+            stmt.close();
+        } catch (SQLException e) {
+            handleError("Error setting schema", e, exit_on_error);
+        }
+    }
+
     // Establishes a connection to the PostgreSQL database using JDBC.
     // It takes a boolean parameter to determine whether to exit the program on error.
     // If exit_on_error is true, the program will terminate if a connection cannot be established.
     // If exit_on_error is false, will throw an exception instead.
-    public static Connection getConnection(Boolean exit_on_error) {
+    public static Connection getConnection(boolean exit_on_error) {
         try {
-            return DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (SQLException e) {
-            System.err.println("Error connecting to database: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
+            if (conn == null || conn.isClosed() || !conn.isValid(2)) {
+                closeConnection(exit_on_error);
+                conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                if (!schema_created) {
+                    createSchema(exit_on_error);
+                    schema_created = true;
+                }
+                setSchema(exit_on_error); 
             }
-            // Wrap and rethrow as runtime exception if exit_on_error=false
-            throw new RuntimeException(e);
-        }
+            return conn;
+        } catch (SQLException e) {
+            handleError("Error connecting to database", e, exit_on_error);
+            return null;        }
     }
 
     // Overloaded method to get a connection without the exit_on_error parameter.
@@ -37,76 +80,49 @@ public class DatabaseConnection {
     }
 
     // Checks if the connection is invalid (null, closed, or not valid).
-    public static boolean isConnectionInvalid(Connection conn) {
+    public static boolean isConnectionInvalid() {
         try {
             return conn == null || conn.isClosed() || !conn.isValid(2);
-        } catch (SQLException e) {
+        } catch (SQLException e) {} {
             // if exception then the connection is indeed invalid
             return true; 
         }
     }
-   
-    // This method ensures that the connection is valid and not closed.
-    // If the connection is closed (or invalid), it will create a new one.
-    // I will not be reconnecting to the database on every query, but rather
-    // checking if the connection is still valid and re-establishing it if necessary.
-    public static Connection ensureConnection(Connection conn, boolean exit_on_error) {
-        if (isConnectionInvalid(conn)) {
-            conn = getConnection(exit_on_error);
-            Statement stmt = createStatement(conn, exit_on_error);
-            executeStatement(stmt, SQLTemplates.SQL_SET_SCHEMA, exit_on_error);
-            closeStatement(stmt, exit_on_error);
-        }
-        return conn;
-    }    
-
-    // Overloaded method to ensure a connection without the exit_on_error parameter.
-    // This method will call the ensureConnection method with exit_on_error=true.
-    // will throw an exception if the connection cannot be re-established.
-    public static Connection ensureConnection(Connection conn) {
-        return ensureConnection(conn, true);
-    }
     
     // Closes the connection safely, handling any SQL exceptions that may occur.
     // It takes a Connection object and a boolean parameter to determine whether to exit the program on error.
-    public static void closeConnection(Connection conn, boolean exit_on_error) {
+    public static void closeConnection(boolean exit_on_error) {
+        // No need to close if the connection is already invalid
+        if (isConnectionInvalid()) {
+            return; // No need to close if the connection is already invalid
+        }
         try {
-            if (!isConnectionInvalid(conn)) {
-                conn.close();
-            }
+            conn.close();
+            conn = null;
         } catch (SQLException e) {
-            System.err.println("Error closing database connection: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+            handleError("Error closing database connection", e, exit_on_error);
         }
     }
 
     // Overloaded method to close a connection without the exit_on_error parameter.
     // This method will call the closeSafe method with exit_on_error=true.
-    public static void closeConnection(Connection conn) {
-        closeConnection(conn, true);
+    public static void closeConnection() {
+        closeConnection(true);
     }
 
     // Creates a statement object for executing SQL queries.
-    // It takes a Connection object and a boolean parameter to determine whether to exit the program on error.
-    // or throw an exception on error if exit_on_error is false.
-    public static Statement createStatement(Connection conn, boolean exit_on_error) {
+    public static Statement createStatement(boolean exit_on_error) {
         try {
-            return conn.createStatement();
+            return getConnection(exit_on_error).createStatement();
         } catch (SQLException e) {
-            System.err.println("Error creating statement: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+            handleError("Error creating statement", e, exit_on_error);
+            return null;        
         }
     }
 
     // Overloaded method to create a statement without the exit_on_error parameter.
-    public static Statement createStatement(Connection conn) {
-        return createStatement(conn, true);
+    public static Statement createStatement() {
+        return createStatement(true);
     }
 
     // Advances the ResultSet cursor to the next row.
@@ -114,9 +130,8 @@ public class DatabaseConnection {
         try {
             return rs.next();
         } catch (SQLException e) {
-            System.err.println("Error advancing ResultSet cursor: " + e.getMessage());
-            if (exit_on_error) System.exit(99);
-            throw new RuntimeException(e);
+            handleError("Error advancing ResultSet cursor", e, exit_on_error);
+            return false; 
         }
     }
     
@@ -126,10 +141,10 @@ public class DatabaseConnection {
     }
   
     // Checks if a table is empty by executing a simple SELECT query with LIMIT 1.
-    public static boolean isTableEmpty(Connection conn, String table_name, boolean exit_on_error) {
+    public static boolean isTableEmpty(String table_name, boolean exit_on_error) {
         String query = "SELECT 1 FROM " + table_name + " LIMIT 1";
-        conn = ensureConnection(conn, exit_on_error);
-        Statement stmt = createStatement(conn, exit_on_error);
+        getConnection(exit_on_error);
+        Statement stmt = createStatement(exit_on_error);
         ResultSet rs = executeQuery(stmt, query, exit_on_error);
         boolean is_empty = !rsNext(rs, exit_on_error);
         closeResultSet(rs, exit_on_error);
@@ -139,8 +154,8 @@ public class DatabaseConnection {
 
     // Overloaded method to check if a table is empty without the exit_on_error parameter.
     // This method will call the isTableEmpty method with exit_on_error=true.   
-    public static boolean isTableEmpty(Connection conn, String table_name) {
-        return isTableEmpty(conn, table_name, true);
+    public static boolean isTableEmpty(String table_name) {
+        return isTableEmpty(table_name, true);
     }
 
     // Retrieves a string value from the ResultSet for a given column name.
@@ -148,9 +163,8 @@ public class DatabaseConnection {
         try {
             return rs.getInt(column);
         } catch (SQLException e) {
-            System.err.println("Error retrieving int column [" + column + "]: " + e.getMessage());
-            if (exit_on_error) System.exit(99);
-            throw new RuntimeException(e);
+            handleError("Error retrieving int from column [" + column + "]", e, exit_on_error);
+            return 0;
         }
     }
     
@@ -164,9 +178,8 @@ public class DatabaseConnection {
         try {
             return rs.getString(column);
         } catch (SQLException e) {
-            System.err.println("Error retrieving string column [" + column + "]: " + e.getMessage());
-            if (exit_on_error) System.exit(99);
-            throw new RuntimeException(e);
+            handleError("Error retrieving string from column [" + column + "]", e, exit_on_error);
+            return null;
         }
     }
     
@@ -180,9 +193,8 @@ public class DatabaseConnection {
         try {
             return rs.getDouble(column);
         } catch (SQLException e) {
-            System.err.println("Error retrieving decimal column [" + column + "]: " + e.getMessage());
-            if (exit_on_error) System.exit(99);
-            throw new RuntimeException(e);
+            handleError("Error retrieving decimal from column [" + column + "]", e, exit_on_error);
+            return 0.0;
         }
     }
 
@@ -196,9 +208,8 @@ public class DatabaseConnection {
         try {
             return rs.getDate(column);
         } catch (SQLException e) {
-            System.err.println("Error retrieving date column [" + column + "]: " + e.getMessage());
-            if (exit_on_error) System.exit(99);
-            throw new RuntimeException(e);
+            handleError("Error retrieving date from column [" + column + "]", e, exit_on_error);
+            return null;
         }
     }
 
@@ -212,9 +223,7 @@ public class DatabaseConnection {
         try {
             ps.setInt(index, value);
         } catch (SQLException e) {
-            System.err.println("Error setting int at index [" + index + "]: " + e.getMessage());
-            if (exit_on_error) System.exit(99);
-            throw new RuntimeException(e);
+            handleError("Error setting int at index [" + index + "]", e, exit_on_error);
         }
     }
     
@@ -228,9 +237,7 @@ public class DatabaseConnection {
         try {
             ps.setDouble(index, value);
         } catch (SQLException e) {
-            System.err.println("Error setting double at index [" + index + "]: " + e.getMessage());
-            if (exit_on_error) System.exit(99);
-            throw new RuntimeException(e);
+            handleError("Error setting double at index [" + index + "]", e, exit_on_error);
         }
     }
 
@@ -244,9 +251,7 @@ public class DatabaseConnection {
         try {
             ps.setString(index, value);
         } catch (SQLException e) {
-            System.err.println("Error setting String at index [" + index + "]: " + e.getMessage());
-            if (exit_on_error) System.exit(99);
-            throw new RuntimeException(e);
+            handleError("Error setting String at index [" + index + "]", e, exit_on_error);
         }
     }
     
@@ -260,9 +265,7 @@ public class DatabaseConnection {
         try {
             ps.setDate(index, value);
         } catch (SQLException e) {
-            System.err.println("Error setting Date at index [" + index + "]: " + e.getMessage());
-            if (exit_on_error) System.exit(99);
-            throw new RuntimeException(e);
+            handleError("Error setting Date at index [" + index + "]", e, exit_on_error);
         }
     }
     
@@ -273,41 +276,33 @@ public class DatabaseConnection {
 
     // Creates a PreparedStatement for parameterized SQL queries.
     // If exit_on_error is true, exits on failure. Otherwise, throws RuntimeException.
-    public static PreparedStatement prepareStatement(Connection conn, String sql, boolean exit_on_error) {
+    public static PreparedStatement prepareStatement(String sql, boolean exit_on_error) {
         try {
             return conn.prepareStatement(sql);
         } catch (SQLException e) {
-            System.err.println("Error preparing statement: " + sql);
-            System.err.println("*** Details: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+            handleError("Error preparing statement: " + sql, e, exit_on_error);
+            return null; 
         }
     }
 
     // Overloaded version with exit_on_error = true by default.
-    public static PreparedStatement prepareStatement(Connection conn, String sql) {
-        return prepareStatement(conn, sql, true);
+    public static PreparedStatement prepareStatement(String sql) {
+        return prepareStatement(sql, true);
     }
 
     // Creates a PreparedStatement for parameterized SQL queries that also returns generated keys.
-    public static PreparedStatement prepareStatementWithKeys(Connection conn, String sql, boolean exit_on_error) {
+    public static PreparedStatement prepareStatementWithKeys(String sql, boolean exit_on_error) {
         try {
             return conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         } catch (SQLException e) {
-            System.err.println("Error preparing statement (with keys): " + sql);
-            System.err.println("*** Details: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+            handleError("Error preparing statement (with keys): " + sql, e, exit_on_error);
+            return null;
         }
     }
 
     // Overloaded version with exit_on_error = true by default.
-    public static PreparedStatement prepareStatementWithKeys(Connection conn, String sql) {
-        return prepareStatementWithKeys(conn, sql, true);
+    public static PreparedStatement prepareStatementWithKeys(String sql) {
+        return prepareStatementWithKeys(sql, true);
     }
 
     // Executes a SQL command using the provided Statement object.
@@ -315,12 +310,7 @@ public class DatabaseConnection {
         try {
             stmt.execute(sql);
         } catch (SQLException e) {
-            System.err.println("SQL execution error for: " + sql);
-            System.err.println("*** Details: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+            handleError("SQL execution error for: " + sql, e, exit_on_error);
         }
     }
 
@@ -334,12 +324,8 @@ public class DatabaseConnection {
         try {
             return stmt.executeQuery();
         } catch (SQLException e) {
-            System.err.println("Statement execution error!");
-            System.err.println("*** Details: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+            handleError("Statement execution error", e, exit_on_error);
+            return null; 
         }
     }
 
@@ -353,12 +339,8 @@ public class DatabaseConnection {
         try {
             return stmt.executeQuery(sql);
         } catch (SQLException e) {
-            System.err.println("Statement execution error: " + sql);
-            System.err.println("*** Details: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+            handleError("Query execution error: " + sql, e, exit_on_error);
+            return null;
         }
     }
 
@@ -372,12 +354,8 @@ public class DatabaseConnection {
         try {
             return stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            System.err.println("Update execution error: " + sql);
-            System.err.println("*** Details: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+            handleError("Update execution error: " + sql, e, exit_on_error);
+            return -1;
         }
     }
     
@@ -391,12 +369,8 @@ public class DatabaseConnection {
         try {
             return ps.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("PreparedStatement update error!");
-            System.err.println("*** Details: " + e.getMessage());
-            if (exit_on_error) {
-                System.exit(99);
-            }
-            throw new RuntimeException(e);
+            handleError("PreparedStatement update error", e, exit_on_error);
+            return -1;
         }
     }
     
@@ -407,16 +381,22 @@ public class DatabaseConnection {
 
     // Retrieves the auto-generated key from the last executed statement.
     // It assumes that the statement was created with the option to return generated keys.
-    public static int getGeneratedKey(PreparedStatement ps) {
+    public static int getGeneratedKey(PreparedStatement ps, boolean exit_on_error) {
         try (ResultSet rs = ps.getGeneratedKeys()) {
             if (rs.next()) {
                 // Assuming the key is in the first column
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            System.err.println("Error retrieving generated key: " + e.getMessage());
+            handleError("Error retrieving generated key", e, exit_on_error);
+
         }
         return -1;
+    }
+
+    // Overloaded method to retrieve the auto-generated key without the exit_on_error parameter.
+    public static int getGeneratedKey(PreparedStatement ps) {
+        return getGeneratedKey(ps, true);
     }
     
     // Closes the Statement object safely, handling any SQL exceptions that may occur.
@@ -426,11 +406,7 @@ public class DatabaseConnection {
             try {
                 stmt.close();
             } catch (SQLException e) {
-                System.err.println("Error closing statement: " + e.getMessage());
-                if (exit_on_error) {
-                    System.exit(99);
-                }
-                throw new RuntimeException(e);
+                handleError("Error closing statement", e, exit_on_error);
             }
         }
     }
@@ -446,11 +422,7 @@ public class DatabaseConnection {
             try {
                 rs.close();
             } catch (SQLException e) {
-                System.err.println("Error closing ResultSet: " + e.getMessage());
-                if (exit_on_error) {
-                    System.exit(99);
-                }
-                throw new RuntimeException(e);
+                handleError("Error closing ResultSet", e, exit_on_error);
             }
         }
     }
@@ -490,7 +462,6 @@ public class DatabaseConnection {
             }
         }
     }
-            
     
 
 }

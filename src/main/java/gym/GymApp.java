@@ -1,6 +1,5 @@
 package gym;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,16 +22,15 @@ public class GymApp {
     private static final String INIT_ARG="--init";
 
     public static void main(String[] args)  {
-
         Utils.print_title_message("WELCOME TO GYM APP", SCREEN_WIDTH, '*');
 
-        Connection gymdb = DatabaseInitializer.databaseInit(processArg(args, DROP_ARG), processArg(args, INIT_ARG));
-        
-        Scanner scanner = new Scanner(System.in);
-        MenuService.showMain(gymdb, scanner);
-        
+        // Check if the argument is present in the command line arguments and process them
+        DatabaseInitializer.databaseInit(processArg(args, DROP_ARG), processArg(args, INIT_ARG));
 
-        DatabaseConnection.closeConnection(gymdb);
+        Scanner scanner = new Scanner(System.in);
+        MenuService.showMain(scanner);
+        scanner.close();
+        DatabaseConnection.closeConnection();
         
     }
 

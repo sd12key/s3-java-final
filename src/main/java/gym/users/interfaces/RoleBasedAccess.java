@@ -42,7 +42,7 @@ public interface RoleBasedAccess {
         return createUser(username, password_hash, email, full_name, address, phone_number, role, true);    
     }
 
-    // Static method to cast a User to a specific role type
+    // Generec static method to cast a User to a specific role type
     // This method checks if the user is of the specified role type and returns it if true, otherwise returns null.
     // usage example: Trainer trainer = User.castToRole(user, Trainer.class);
     // checks if role is "trainer" and if user is an instance of Trainer class
@@ -56,6 +56,8 @@ public interface RoleBasedAccess {
     }
 
     abstract void showUserMenu();
+
+    
 
 
 

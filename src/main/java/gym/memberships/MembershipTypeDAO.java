@@ -15,11 +15,11 @@ public abstract class MembershipTypeDAO {
 
     // add new membership type to the database
     // returns true if the membership type was added successfully, false otherwise
-    public static boolean addNew(MembershipType type, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static boolean addNew(MembershipType type, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_INSERT_MEMBERSHIP_TYPE, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_INSERT_MEMBERSHIP_TYPE, exit_on_error);
             DatabaseConnection.psSetString(ps, 1, type.getUserRole(), exit_on_error);
             DatabaseConnection.psSetString(ps, 2, type.getType(), exit_on_error);
             DatabaseConnection.psSetString(ps, 3, type.getDescription(), exit_on_error);
@@ -33,16 +33,16 @@ public abstract class MembershipTypeDAO {
     }
     
     // overload method to exit on any error
-    public static boolean addNew(MembershipType type, Connection conn) {
-        return addNew(type, conn, true);
+    public static boolean addNew(MembershipType type) {
+        return addNew(type, true);
     }
 
-    public static int addNewReturnId(MembershipType type, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static int addNewReturnId(MembershipType type, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_INSERT_MEMBERSHIP_TYPE_RETURN_ID, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_INSERT_MEMBERSHIP_TYPE_RETURN_ID, exit_on_error);
             DatabaseConnection.psSetString(ps, 1, type.getUserRole(), exit_on_error);
             DatabaseConnection.psSetString(ps, 2, type.getType(), exit_on_error);
             DatabaseConnection.psSetString(ps, 3, type.getDescription(), exit_on_error);
@@ -65,18 +65,18 @@ public abstract class MembershipTypeDAO {
     }
 
     // overload method to exit on any error
-    public static int addNewReturnId(MembershipType type, Connection conn) {
-        return addNewReturnId(type, conn, true);
+    public static int addNewReturnId(MembershipType type) {
+        return addNewReturnId(type, true);
     }
 
     // get membership type by id from the database
-    public static MembershipType getById(int id, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static MembershipType getById(int id, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
     
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_SELECT_MEMBERSHIP_TYPE_BY_ID, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_MEMBERSHIP_TYPE_BY_ID, exit_on_error);
             DatabaseConnection.psSetInt(ps, 1, id, exit_on_error);
             rs = DatabaseConnection.executeQuery(ps, exit_on_error);
     
@@ -93,18 +93,18 @@ public abstract class MembershipTypeDAO {
     }
         
     // overload method to exit on any error
-    public static MembershipType getById(int id, Connection conn) {
-        return getById(id, conn, true);
+    public static MembershipType getById(int id) {
+        return getById(id, true);
     }
 
     // get all membership types by specific user role
-    public static List<MembershipType> getByUserRole(String role, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static List<MembershipType> getByUserRole(String role, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
     
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_SELECT_MEMBERSHIP_TYPE_BY_USER_ROLE, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_MEMBERSHIP_TYPE_BY_USER_ROLE, exit_on_error);
             DatabaseConnection.psSetString(ps, 1, role, exit_on_error);
             rs = DatabaseConnection.executeQuery(ps, exit_on_error);
     
@@ -121,19 +121,19 @@ public abstract class MembershipTypeDAO {
     }
     
     // overload method to exit on any error
-    public static List<MembershipType> getByUserRole(String role, Connection conn) {
-        return getByUserRole(role, conn, true);
+    public static List<MembershipType> getByUserRole(String role) {
+        return getByUserRole(role, true);
     }
 
 
     // get all membership types from the database
-    public static List<MembershipType> getAll(Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static List<MembershipType> getAll(boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         Statement stmt = null;
         ResultSet rs = null;
     
         try {
-            stmt = DatabaseConnection.createStatement(conn, exit_on_error);
+            stmt = DatabaseConnection.createStatement(exit_on_error);
             rs = DatabaseConnection.executeQuery(stmt, SQLTemplates.SQL_SELECT_ALL_MEMBERSHIP_TYPES, exit_on_error);
     
             List<MembershipType> types = new ArrayList<>();
@@ -150,8 +150,8 @@ public abstract class MembershipTypeDAO {
     }
     
     // overload method to exit on any error
-    public static List<MembershipType> getAll(Connection conn) {
-        return getAll(conn, true);
+    public static List<MembershipType> getAll() {
+        return getAll(true);
     }
 
     // private method to build a MembershipType object from a ResultSet

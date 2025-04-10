@@ -1,23 +1,21 @@
 package gym.users;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import gym.database.DatabaseConnection;
 import gym.database.SQLTemplates;
-import gym.users.childclasses.Trainer;
 import gym.users.interfaces.RoleBasedAccess;
 import gym.database.DBConst;
 
 public abstract class UserDAO {
 
-    public static boolean addNew(User user, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static boolean addNew(User user, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_INSERT_USER, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_INSERT_USER, exit_on_error);
     
             DatabaseConnection.psSetString(ps, 1, user.getUsername(), exit_on_error);
             DatabaseConnection.psSetString(ps, 2, user.getPasswordHash(), exit_on_error);
@@ -33,16 +31,16 @@ public abstract class UserDAO {
         }
     }
     
-    public static boolean addNew(User user, Connection conn) {
-        return addNew(user, conn, true);
+    public static boolean addNew(User user) {
+        return addNew(user, true);
     }
 
-    public static int addNewReturnId(User user, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static int addNewReturnId(User user, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_INSERT_USER_RETURN_ID, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_INSERT_USER_RETURN_ID, exit_on_error);
     
             DatabaseConnection.psSetString(ps, 1, user.getUsername(), exit_on_error);
             DatabaseConnection.psSetString(ps, 2, user.getPasswordHash(), exit_on_error);
@@ -67,18 +65,19 @@ public abstract class UserDAO {
         }
     }
     
-    public static int addNewReturnId(User user, Connection conn) {
-        return addNewReturnId(user, conn, true);
+    // overload method to exit on any error
+    public static int addNewReturnId(User user) {
+        return addNewReturnId(user, true);
     }
 
     // get user by id from the database
-    public static User getById(int user_id, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static User getById(int user_id, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_SELECT_USER_BY_ID, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_USER_BY_ID, exit_on_error);
             DatabaseConnection.psSetInt(ps, 1, user_id, exit_on_error);
             rs = DatabaseConnection.executeQuery(ps, exit_on_error);
 
@@ -96,18 +95,18 @@ public abstract class UserDAO {
     }
 
     // overload method to exit on any error
-    public static User getById(int user_id, Connection conn) {
-        return getById(user_id, conn, true);
+    public static User getById(int user_id) {
+        return getById(user_id, true);
     }
 
     // get user by username from the database
-    public static User getByUsername(String username, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static User getByUsername(String username, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_SELECT_USER_BY_USERNAME, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_USER_BY_USERNAME, exit_on_error);
             DatabaseConnection.psSetString(ps, 1, username, exit_on_error);
             rs = DatabaseConnection.executeQuery(ps, exit_on_error);
 
@@ -123,34 +122,21 @@ public abstract class UserDAO {
             DatabaseConnection.closeStatement(ps, exit_on_error);
         }
     }
- 
-    public static Trainer getTrainerById(int trainer_id, Connection conn, boolean exitOnError) {
-        User user = getById(trainer_id, conn, exitOnError);
-        if (user == null || !user.getRole().equalsIgnoreCase(User.ROLE_TRAINER)) {
-            if (exitOnError) {
-                System.err.println("Invalid trainer ID: " + trainer_id);
-                System.exit(99);
-            }
-            return null;
-        }
-        // Cast to Trainer
-        return (Trainer) user;
-    }
 
     // overload method to exit on any error
-    public static User getByUsername(String username, Connection conn) {
-        return getByUsername(username, conn, true);
+    public static User getByUsername(String username) {
+        return getByUsername(username, true);
     }
 
     // get all users from the database
-    public static ArrayList<User> getAllUsers(Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static ArrayList<User> getAllUsers(boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
         ArrayList<User> users = new ArrayList<>();
 
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_SELECT_ALL_USERS, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_ALL_USERS, exit_on_error);
             rs = DatabaseConnection.executeQuery(ps, exit_on_error);
 
             while (DatabaseConnection.rsNext(rs, exit_on_error)) {
@@ -169,17 +155,17 @@ public abstract class UserDAO {
     }
 
     // overload method to exit on any error
-    public static ArrayList<User> getAllUsers(Connection conn) {
-        return getAllUsers(conn, true);
+    public static ArrayList<User> getAllUsers() {
+        return getAllUsers(true);
     }
 
     // update user by id in the database
-    public static boolean updateById(User user, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static boolean updateById(User user, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
     
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_UPDATE_USER_BY_ID, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_UPDATE_USER_BY_ID, exit_on_error);
     
             DatabaseConnection.psSetString(ps, 1, user.getUsername(), exit_on_error);
             DatabaseConnection.psSetString(ps, 2, user.getPasswordHash(), exit_on_error);
@@ -199,17 +185,17 @@ public abstract class UserDAO {
     }
     
     // overload method to exit on any error
-    public static boolean updateById(User user, Connection conn) {
-        return updateById(user, conn, true);
+    public static boolean updateById(User user) {
+        return updateById(user, true);
     }
 
     // delete user by id from the database
-    public static boolean deleteById(int user_id, Connection conn, boolean exit_on_error) {
-        conn = DatabaseConnection.ensureConnection(conn, exit_on_error);
+    public static boolean deleteById(int user_id, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
     
         try {
-            ps = DatabaseConnection.prepareStatement(conn, SQLTemplates.SQL_DELETE_USER_BY_ID, exit_on_error);
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_DELETE_USER_BY_ID, exit_on_error);
             DatabaseConnection.psSetInt(ps, 1, user_id, exit_on_error);
     
             int rows_deleted = DatabaseConnection.executeUpdate(ps, exit_on_error);
@@ -221,8 +207,8 @@ public abstract class UserDAO {
     }
     
     // overload method to exit on any error
-    public static boolean deleteById(int user_id, Connection conn) {
-        return deleteById(user_id, conn, true);
+    public static boolean deleteById(int user_id) {
+        return deleteById(user_id, true);
     }
 
     // build a User object from the ResultSet
@@ -243,7 +229,5 @@ public abstract class UserDAO {
     public static User buildFromResultSet(ResultSet rs) {
         return buildFromResultSet(rs, true);
     }
-
-
 
 }
