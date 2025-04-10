@@ -55,11 +55,9 @@ public interface RoleBasedAccess {
         return null;
     }
 
-    abstract void showUserMenu();
+    // abstract void showUserMenu();
+    void showUserMenu();
+    void handleMenuChoice(String choice);
 
-    
-
-
-
-
+    String[] getMenuItems(); 
 }

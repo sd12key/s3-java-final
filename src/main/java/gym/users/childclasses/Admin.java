@@ -1,6 +1,8 @@
 package gym.users.childclasses;
 
 import gym.users.User;
+import gym.menu.MenuConst;
+import gym.menu.MenuService;
 
 public class Admin extends User {
 
@@ -17,12 +19,17 @@ public class Admin extends User {
     // Implementing the abstract method from RoleBasedAccess interface
     @Override
     public void showUserMenu() {
-        System.out.println("=== Admin Menu ===");
-        System.out.println("1. Create User");
-        System.out.println("2. Delete User");
-        System.out.println("3. View All Memberships");
-        System.out.println("4. Total Annual Revenue");
-        System.out.println("0. Logout");
+        MenuService.showUser(this);
+    }
+
+    @Override
+    public String[] getMenuItems() {
+        return MenuConst.ADMIN_MENU_ITEMS;
+    }
+
+    @Override
+    public void handleMenuChoice(String choice) {
+        MenuService.handleAdminMenu(this, choice);
     }
     
 }

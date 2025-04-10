@@ -111,6 +111,9 @@ public abstract class User implements RoleBasedAccess {
     // abstract methods from the interface, to be implemented by subclasses
     @Override
     public abstract void showUserMenu();
-
+    @Override 
+    public abstract void handleMenuChoice(String choice);
+    @Override 
+    public abstract String[] getMenuItems();
 
 }

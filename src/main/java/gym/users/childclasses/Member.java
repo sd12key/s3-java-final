@@ -1,6 +1,8 @@
 package gym.users.childclasses;
 
 import gym.users.User;
+import gym.menu.MenuConst;
+import gym.menu.MenuService;
 
 public class Member extends User{
     // Constructor for Trainer class
@@ -16,10 +18,19 @@ public class Member extends User{
     // Implementing the abstract method from RoleBasedAccess interface
     @Override
     public void showUserMenu() {
-        System.out.println("=== Member Menu ===");
-        System.out.println("1. View Workout Classes");
-        System.out.println("2. Purchase Membership");
-        System.out.println("3. View Membership Expences");
-        System.out.println("0. Logout");
+        MenuService.showUser(this);
     }
+
+    @Override
+    public String[] getMenuItems() {
+        return MenuConst.MEMBER_MENU_ITEMS;
+    }
+
+    @Override
+    public void handleMenuChoice(String choice) {
+        MenuService.handleMemberMenu(this, choice);
+    }
+
 }
+
+

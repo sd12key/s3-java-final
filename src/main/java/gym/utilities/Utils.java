@@ -13,24 +13,38 @@ public class Utils {
             str = str.substring(0, length);
         }
         int padding = (length - str.length()) / 2;
-        String paddedString = " ".repeat(padding) + str + " ".repeat(length - str.length() - padding);
-        return paddedString;
+        String padded_string = " ".repeat(padding) + str + " ".repeat(length - str.length() - padding);
+        return padded_string;
     }
 
     public static String symbol_line(char symbol, int length) {
         return Character.toString(symbol).repeat(length);
     }
 
-    public static void print_title_message(String message, int message_length, char symbol) {
-        print_title_message(message, message_length, symbol, message_length);
+    public static String add_offset_to_string(String str, int offset) {
+        return symbol_line(' ', offset) + str;
     }
 
-    public static void print_title_message(String message, int message_length, char symbol, int screen_width) {
+    public static String print_role(String role, char symbol, int length) {
+        int left_offset = 5;
+        String padded_string = symbol_line(symbol, left_offset) +
+            role + symbol_line(symbol, length - left_offset - role.length());
+        return padded_string;
+    }
+
+    public static void print_title_message(String message1, String message2, int message_length, char symbol, int offset, String role) {
         System.out.println();
-        System.out.println(center_string(symbol_line(symbol, message_length), screen_width));
-        System.out.println(center_string(symbol + center_string(message, message_length - 2) + symbol, screen_width));
-        System.out.println(center_string(symbol_line(symbol, message_length), screen_width));
+        System.out.println(add_offset_to_string(print_role(role, symbol, message_length), offset));
+        System.out.println(add_offset_to_string(symbol + center_string(message1, message_length - 2) + symbol, offset));
+        if (!message1.equals(message2)) {
+            System.out.println(add_offset_to_string(symbol + center_string(message2, message_length - 2) + symbol, offset));
+        }
+        System.out.println(add_offset_to_string(symbol_line(symbol, message_length), offset));
         System.out.println();
+    }
+
+    public static void print_title_message(String message, int message_length, char symbol, int offset, String role) {
+        print_title_message(message, message, message_length, symbol, offset, role);
     }
 
     // This method parses a CSV line and returns an array of strings.

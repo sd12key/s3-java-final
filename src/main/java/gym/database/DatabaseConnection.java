@@ -23,6 +23,10 @@ public final class DatabaseConnection {
     private static final String USER = "postgres";
     private static final String PASSWORD = "postgres";
 
+    private DatabaseConnection() {
+       // Private constructor to prevent instantiation
+    }
+
     // Helper method for error handling
     private static void handleError(String error_msg, SQLException e, boolean exit_on_error) {
         System.err.println(error_msg + ": " + e.getMessage());

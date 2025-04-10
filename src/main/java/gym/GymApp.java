@@ -6,32 +6,30 @@ import java.util.Scanner;
 
 import gym.database.DatabaseConnection;
 import gym.dbinit.DatabaseInitializer;
-import gym.utilities.Utils;
 import gym.menu.MenuService;
 
 public class GymApp {
 
-    private static final int SCREEN_WIDTH = 70;
-
     private static final String APP_USAGE = 
-        "Valid arguments:\n" +
-        "  --drop           Drop all tables\n" +
-        "  --drop --init    Drop tables and initialize from CSV\n" +
-        "                   (--init can only be used with --drop)\n";
+        "\nGymApp [argument1] [argument2]\n" +
+        "       Valid arguments:\n" +
+        "       --drop           Drop all tables\n" +
+        "       --drop --init    Drop tables and initialize from CSV\n" +
+        "                        (--init can only be used with --drop)\n";
     private static final String DROP_ARG="--drop";
     private static final String INIT_ARG="--init";
 
     public static void main(String[] args)  {
-        Utils.print_title_message("WELCOME TO GYM APP", SCREEN_WIDTH, '*');
+        System.out.println("*** Welcome to the Gym Management System ***\n");
 
         // Check if the argument is present in the command line arguments and process them
         DatabaseInitializer.databaseInit(processArg(args, DROP_ARG), processArg(args, INIT_ARG));
 
         Scanner scanner = new Scanner(System.in);
-        MenuService.showMain(scanner);
+        MenuService.init(scanner);
+        MenuService.showMain();
         scanner.close();
         DatabaseConnection.closeConnection();
-        
     }
 
     private static boolean processArg(String[] args, String arg_name) {
@@ -47,7 +45,7 @@ public class GymApp {
             }
 
             if (seen_args.contains(arg)) {
-                System.err.println("Duplicate argument [" + arg + "] detected! "+ APP_USAGE);
+                System.err.println("\n--> Error: duplicate argument [" + arg + "] detected! \n"+ APP_USAGE);
                 System.exit(99);
             }
             seen_args.add(arg);
@@ -60,7 +58,7 @@ public class GymApp {
             } else if (arg.equals(INIT_ARG)) {
                 has_init = true;
             } else {
-                System.err.println("Invalid argument [" + arg + "] detected! " + APP_USAGE);
+                System.err.println("\n--> Error: Invalid argument [" + arg + "] detected! \n" + APP_USAGE);
                 System.exit(99);
             }
         }

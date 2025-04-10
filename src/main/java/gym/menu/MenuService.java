@@ -4,24 +4,58 @@ import java.util.Scanner;
 
 import gym.users.UserService;
 import gym.users.User;
+
 import gym.utilities.Utils;
 
-public class MenuService {
+public final class MenuService {
 
-    public static void showMain(Scanner scanner) {
+    private static Scanner scanner = null;
+
+    private MenuService() {
+        // private vonstructor for MenuService (no instantiation)
+    }
+
+    public static void init(Scanner sc) {
+        scanner = sc;
+    }
+       
+    public static void printMenu(String menu_role, String menu_title1, String menu_title2, String[] menu_items) {
+        Utils.print_title_message(menu_title1, menu_title2, MenuConst.WIDTH_MENU_TITLE, '*', MenuConst.OFFSET_MENU_TITLE, menu_role);
+        for (int i = 0; i < menu_items.length; i++) {
+            System.out.println(Utils.add_offset_to_string(menu_items[i], MenuConst.OFFSET_MENU_ITEMS));
+        }
+    }
+
+    public static void printMenu(String menu_role, String menu_title, String[] menu_items) {
+        printMenu(menu_role, menu_title, menu_title, menu_items);
+    }
+
+    private static void print_info_message(String message, char symbol) {
+        System.out.println("\n" + Utils.add_offset_to_string(Utils.print_role(" " + message + " ",symbol,MenuConst.WIDTH_MENU_TITLE), MenuConst.OFFSET_MENU_TITLE) + "\n");
+    }
+
+    private static void print_invalid_choice() {
+        print_info_message("Invalid choice, try again", '=');
+    }
+
+    private static void print_logged_out() {
+        print_info_message("LOGGED OUT!", '*');
+    }
+
+    private static void print_goodbye() {
+        print_info_message("GOODBYE!", '*');
+    }
+
+    public static void showMain() {
         while (true) {
-            Utils.print_title_message("MAIN MENU", 50, '*', 70);
-            System.out.println(Utils.symbol_line(' ', 20) + "(1) Login");
-            System.out.println(Utils.symbol_line(' ', 20) + "(2) Register Member");
-            System.out.println(Utils.symbol_line(' ', 20) + "(3) Register Trainer");
-            System.out.println(Utils.symbol_line(' ', 20) + "(4) Register Admin");
-            System.out.println(Utils.symbol_line(' ', 20) + "(0) Exit");
-
-            System.out.print("\nEnter your choice: ");
+            printMenu(MenuConst.MAIN_MENU, MenuConst.APP_WELCOME_MSG, MenuConst.MAIN_MENU_ITEMS);
+            System.out.print("\n"+Utils.add_offset_to_string("Enter your choice: ", MenuConst.OFFSET_MENU_ITEMS));
+            String choice = scanner.nextLine().trim();
 
             String username = null;
             String password = null;
-            String choice = scanner.nextLine().trim();
+            User logged_user = null;
+            
             switch (choice) {
                 case "1":
                     System.out.println("=== Login ===");
@@ -31,9 +65,12 @@ public class MenuService {
                     password = scanner.nextLine().trim();
                     // Call the login method from UserService
                     // Assuming UserService.login returns a User object or null if login fails
-                    User logged_user = UserService.login(username, password);
+                    logged_user = UserService.login(username, password);
                     if (logged_user != null) {
                         System.out.println("Login successful! Welcome, " + logged_user.getFullName() + "!");
+                        
+                        // *** ROLE-BASED ACCESS ***
+                        // loged_user.showUserMenu();
                         logged_user.showUserMenu();
                     } else {
                         System.out.println("Invalid credentials. Please try again.");
@@ -82,11 +119,118 @@ public class MenuService {
                     }
                     break;
                 case "0":
-                    System.out.println("Goodbye!");
+                    print_goodbye();
                     return;
                 default:
-                    System.out.println("Invalid choice.");
+                    print_invalid_choice();
             }
         }
     }
+
+    // Method to show custome menu for each user type
+    // *** FULLY ROLE-BASED ACCESS ***
+    public static void showUser(User user) {
+        while (true) {
+            printMenu(
+                " " + user.getRole().toUpperCase() + " ",
+                user.getFullName(), 
+                user.getUsername() + "(" + user.getEmail() + ")", 
+                user.getMenuItems()
+            );
+            
+            System.out.print("\n"+Utils.add_offset_to_string("Enter your choice: ", MenuConst.OFFSET_MENU_ITEMS));
+
+            String choice = scanner.nextLine().trim();
+            if ("0".equals(choice)) {
+                print_logged_out();
+                return;
+            }
+            user.handleMenuChoice(choice);
+        }
+    }
+
+    // implementations of menu handlers for Admin
+    public static void handleAdminMenu(User user, String choice) {
+        switch (choice) {
+            case "1":
+                System.out.println("=== Choice 1 ===");
+                // code
+                break;
+            case "2":
+                System.out.println("=== Choice 2 ===");
+                // code                    
+                break;
+            case "3":
+                System.out.println("=== Choice 3 ===");
+                // code                    
+                break;
+            case "4":
+                System.out.println("=== Choice 4 ===");
+                // code                    
+                break;
+            case "5":
+                System.out.println("=== Choice 5 ===");                
+                // code                    
+                break;
+            default:
+                print_invalid_choice();
+        }
+    }
+
+    // implementations of menu handlers for Member
+    public static void handleMemberMenu(User user, String choice) {
+        switch (choice) {
+            case "1":
+                System.out.println("=== Choice 1 ===");
+                // code
+                break;
+            case "2":
+                System.out.println("=== Choice 2 ===");
+                // code                    
+                break;
+            case "3":
+                System.out.println("=== Choice 3 ===");
+                // code                    
+                break;
+            case "4":
+                System.out.println("=== Choice 4 ===");
+                // code                    
+                break;
+            default:
+                System.out.println("Invalid choice.");
+        }
+    }
+
+    // implementations of menu handlers for Trainer
+    public static void handleTrainerMenu(User user, String choice) {
+        switch (choice) {
+            case "1":
+                System.out.println("=== Choice 1 ===");
+                // code
+                break;
+            case "2":
+                System.out.println("=== Choice 2 ===");
+                // code                    
+                break;
+            case "3":
+                System.out.println("=== Choice 3 ===");
+                // code                    
+                break;
+            case "4":
+                System.out.println("=== Choice 4 ===");
+                // code                    
+                break;
+            case "5":
+                System.out.println("=== Choice 5 ===");                
+                // code                    
+            case "6":
+                System.out.println("=== Choice 6 ===");                
+                // code                    
+                break;
+            default:
+                System.out.println("Invalid choice.");
+        }
+    }
+
+
 }
