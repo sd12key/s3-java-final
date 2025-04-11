@@ -99,14 +99,18 @@ public abstract class User implements RoleBasedAccess {
         this.role = role;
     }
    
+    public abstract boolean canHaveMembership();
+
+    public abstract boolean canTeachClass();
+
     @Override
     public String toString() {
-        return "[" + this.id + ", " + Utils.FirstCharToUpperCase(this.role) + "]: " + 
+        return "[" + this.id + ", " + Utils.firstCharToUpperCase(this.role) + "]: " + 
         this.username + " (" + this.full_name + ", " + this.email + ")";
     }
 
     public String toStringNoId() {
-        return this.role + ": " + this.username + " (" + this.full_name + ", " + this.email + ")";
+        return Utils.firstCharToUpperCase(this.role) + ": " + this.username + " (" + this.full_name + ", " + this.email + ")";
     }
 
     // abstract methods from the interface, to be implemented by subclasses

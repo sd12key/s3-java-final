@@ -21,28 +21,31 @@ public final class MenuConst {
         "(2) List All Registered Users",
         "(3) View User Account Details",
         "(4) Delete User Account",
-        "(5) List All Memberships",
-        "(6) View Revenue Report",
+        "(5) View All Memberships",
+        "(6) List Workout Classes",
+        "(7) View Revenue Report",
         "(0) Logout"
     };
 
     public static final String MEMBER_MENU = " MEMBER ";
     public static final String[] MEMBER_MENU_ITEMS = {
         "(1) View Account Details",
-        "(2) List All Workout Classes",
+        "(2) List Workout Classes",
         "(3) Purchase Membership",
-        "(4) View Membership Expenses",
+        "(4) View Membership/Expenses",
         "(0) Logout"
     };
 
     public static final String TRAINER_MENU = " TRAINER ";
     public static final String[] TRAINER_MENU_ITEMS = {
         "(1) View Account Details",
-        "(2) List Workout Classes",
-        "(3) Create Workout Class",
-        "(4) Modify Workout Class",
-        "(5) Delete Workout Class",
-        "(6) Purchase Membership", 
+        "(2) List All Workout Classes",
+        "(3) View My Workout Classes",    
+        "(4) Create Workout Class",
+        "(5) Modify Workout Class",
+        "(6) Delete Workout Class",
+        "(7) Purchase Membership", 
+        "(8) View Membership/Expenses",        
         "(0) Logout"
     };
 }

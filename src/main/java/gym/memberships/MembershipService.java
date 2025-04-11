@@ -4,9 +4,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import gym.users.User;
 import gym.utilities.Utils;
 
 public class MembershipService {
+
+    public static List<Membership> getMembershipsByUser(User user) {
+        return MembershipDAO.getAllByUserId(user.getId());
+    }
+
+    public static List<Membership> getMembershipsByUser(int id) {
+        return MembershipDAO.getAllByUserId(id);
+    }
 
     public static List<Membership> getAllMemberships() {
         return MembershipDAO.getAll();
@@ -52,6 +61,24 @@ public class MembershipService {
         }
         
         return report;
+    }
+
+    public static List<String> getMembershipsByUserReport(int user_id) {
+        List<String> report = new ArrayList<>();
+        List<Membership> memberships = getMembershipsByUser(user_id);
+        if (memberships == null || memberships.isEmpty()) {
+            report.add(">>> No memberships found");
+            return report;
+        }
+        report.add(">>> Memberships:");
+        for (Membership membership : memberships) {
+            report.add(membership.toString());
+        }
+        return report;
+    }
+    
+    public static List<String> getMembershipsByUserReport(User user) {
+        return getMembershipsByUserReport(user.getId());
     }
 
     public static List<String> getRevenueReport() {
@@ -136,15 +163,31 @@ public class MembershipService {
     }
 
     // Calculate total revenue from memberships list
-    private static double calculateTotalRevenue(List<Membership> memberships) {
-        double totalEarnings = 0.0;
+    public static double[] calculateMembershipTotals(List<Membership> memberships) {
+        double activeTotals = 0.0;
+        double expiredTotals = 0.0;
         for (Membership membership : memberships) {
-            totalEarnings += membership.getType().getCost();
+            if (membership.isExpired()) {
+                expiredTotals += membership.getType().getCost();
+            } else {
+                activeTotals += membership.getType().getCost();
+            }
         }
-        return totalEarnings;
+        return new double[] {activeTotals, expiredTotals};
     }
     
-    
+    // Calculate total active and expired memberships
+    public static int[] calculateMembershipCounts(List<Membership> memberships) {
+        int activeCount = 0;
+        int expiredCount = 0;
+        for (Membership membership : memberships) {
+            if (membership.isExpired()) {
+                expiredCount++;
+            } else {
+                activeCount++;
+            }
+        }
+        return new int[] {activeCount, expiredCount};    
+    }
 
-    
 }

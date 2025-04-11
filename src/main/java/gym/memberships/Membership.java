@@ -83,7 +83,7 @@ public class Membership {
         }
     
         return "[" + this.id +
-                ", " + Utils.FirstCharToUpperCase(this.type.getUserRole()) +
+                ", " + Utils.firstCharToUpperCase(this.type.getUserRole()) +
                 "/" + this.type.getType() + "/" + "$" + Utils.double_to_str(this.type.getCost()) + "] " +
                 this.user.getFullName() + "(id:" + this.user.getId() + ")" +
                 ", purchased " + this.purchase_date + " (" + status + ")";

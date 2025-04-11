@@ -44,21 +44,12 @@ public class UserService {
         return UserDAO.getById(id);
     }
 
-    public static List<String> getUserDetailsReport(User user) {
-        List<String> details = new ArrayList<>();
-        User fetched_user = UserDAO.getById(user.getId());
-        if (fetched_user == null) {
-            details.add(">>> User not found.");
-            return details;
-        }
-        details.add("User ID: " + fetched_user.getId());
-        details.add("Role: " + Utils.FirstCharToUpperCase(fetched_user.getRole()));
-        details.add("Username: " + fetched_user.getUsername());
-        details.add("Email: " + fetched_user.getEmail());
-        details.add("Name: " + fetched_user.getFullName());
-        details.add("Address: " + fetched_user.getAddress());
-        details.add("Phone: " + fetched_user.getPhoneNumber());
-        return details;
+    public static boolean deleteUser(int id) {
+        return UserDAO.deleteById(id);
+    }
+
+    public static boolean deleteUser(User user) {
+        return UserDAO.deleteById(user.getId());    
     }
 
     public static List<String> getUserDetailsReport(int id) {
@@ -68,15 +59,20 @@ public class UserService {
             details.add(">>> User not found.");
             return details;
         }
-        details.add("User ID: " + user.getId());
-        details.add("Role: " + Utils.FirstCharToUpperCase(user.getRole()));
+        details.add(">>> User Details:");
+        details.add("User ID:  " + user.getId());
+        details.add("Role:     " + Utils.firstCharToUpperCase(user.getRole()));
         details.add("Username: " + user.getUsername());
-        details.add("Email: " + user.getEmail());
-        details.add("Name: " + user.getFullName());
-        details.add("Address: " + user.getAddress());
-        details.add("Phone: " + user.getPhoneNumber());
+        details.add("Email:    " + user.getEmail());
+        details.add("Name:     " + user.getFullName());
+        details.add("Address:  " + user.getAddress());
+        details.add("Phone:    " + user.getPhoneNumber());
         return details;
     }
+
+    public static List<String> getUserDetailsReport(User user) {
+        return getUserDetailsReport(user.getId());
+    }        
 
     public static List<User> getAllUsers() {
         return UserDAO.getAllUsers();
@@ -86,7 +82,7 @@ public class UserService {
         List<String> report = new ArrayList<>();
         List<User> users = UserDAO.getAllUsers();
         if (users == null || users.isEmpty()) {
-            report.add("No users found.");
+            report.add(">>> No users found.");
             return report;
         }
         for (User user : users) {
@@ -94,5 +90,4 @@ public class UserService {
         }
         return report;
     }
-
 }

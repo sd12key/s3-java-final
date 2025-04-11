@@ -47,7 +47,7 @@ public class Utils {
         print_title_message(message, message, message_length, symbol, offset, role);
     }
 
-    public static String FirstCharToUpperCase(String str) {
+    public static String firstCharToUpperCase(String str) {
         if (str == null || str.isEmpty()) {
             return str;
         }

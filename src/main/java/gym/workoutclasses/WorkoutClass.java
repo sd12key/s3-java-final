@@ -57,7 +57,7 @@ public class WorkoutClass {
 
     @Override
     public String toString() {
-        return "WorkoutClass [" + this.id + ", " + this.type + "] " +
-               this.trainer.getFullName() + ": " + this.description;
+        return "[ID:" + this.id + ", " + this.type + "] " +
+               this.description + " (" + this.trainer.getFullName() + ")";
     }
 }
