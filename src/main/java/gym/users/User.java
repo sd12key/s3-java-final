@@ -1,5 +1,6 @@
 package gym.users;
 import gym.users.interfaces.RoleBasedAccess;
+import gym.utilities.Utils;
 
 // This is the base class for all users in the gym management system.
 // It's an abstract class, meaning it cannot be instantiated directly.
@@ -100,7 +101,7 @@ public abstract class User implements RoleBasedAccess {
    
     @Override
     public String toString() {
-        return "[" + this.id + ", " + this.role +"]: " + 
+        return "[" + this.id + ", " + Utils.FirstCharToUpperCase(this.role) + "]: " + 
         this.username + " (" + this.full_name + ", " + this.email + ")";
     }
 

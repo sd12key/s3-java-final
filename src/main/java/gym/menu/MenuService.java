@@ -159,13 +159,17 @@ public final class MenuService {
                 printReport(UserService.getUserDetailsReport(user), true);
                 break;
             case "2":
-
-                System.out.println("=== Choice 2 ===");
-                // code                    
+                // view all users
+                print_info_message(user.getMenuItems()[1], '>');
+                printReport(UserService.getAllUsersReport(), true);
                 break;
             case "3":
-                System.out.println("=== Choice 3 ===");
-                // code                    
+                // view user account info
+                print_info_message(user.getMenuItems()[2], '>');
+                int user_id = enterId("Enter User ID to View Account Info");
+                if (user_id == 0) { break; }
+                System.out.println();
+                printReport(UserService.getUserDetailsReport(user_id), true);
                 break;
             case "4":
                 System.out.println("=== Choice 4 ===");
@@ -257,6 +261,17 @@ public final class MenuService {
         printReport(lines, wait_for_enter, null);
     }
 
+    public static int enterId(String prompt) {
+        while (true) {
+            System.out.print(Utils.add_offset_to_string(prompt + " (0 to exit): ", MenuConst.OFFSET_MENU_TITLE));
+            String input = scanner.nextLine();
+            int id = Utils.validate_id(input);
+            if (id != -1) {
+                return id;
+            }
+            System.out.println(Utils.add_offset_to_string("--> Invalid input.", MenuConst.OFFSET_MENU_TITLE));
+        }
+    }
 
 
 }

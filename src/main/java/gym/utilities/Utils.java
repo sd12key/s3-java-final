@@ -95,4 +95,16 @@ public class Utils {
         return password_1.equals(password_2);
     }
 
+    public static int validate_id(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return -1;
+        }
+        try {
+            int value = Integer.parseInt(input.trim());
+            return value >= 0 ? value : -1;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
 }
