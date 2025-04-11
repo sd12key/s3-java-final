@@ -15,6 +15,14 @@ public class Trainer extends User{
         super(username, password_hash, email, full_name, address, phone_number, User.ROLE_TRAINER);
     }
 
+    public boolean canHaveMembership() {
+        return true; 
+    }
+
+    public boolean canTeachClass() {
+        return true; 
+    }
+
     // Implementing the abstract method from RoleBasedAccess interface
     @Override
     public void showUserMenu() {

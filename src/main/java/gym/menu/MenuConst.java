@@ -21,7 +21,8 @@ public final class MenuConst {
         "(2) List All Registered Users",
         "(3) View User Account Details",
         "(4) Delete User Account",
-        "(5) View Memberships and Revenue",
+        "(5) List All Memberships",
+        "(6) View Revenue Report",
         "(0) Logout"
     };
 

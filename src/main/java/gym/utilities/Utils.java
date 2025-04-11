@@ -107,4 +107,21 @@ public class Utils {
         }
     }
 
+    public static String double_to_str(double value, int decimal_places) {
+        String format_string = "%." + decimal_places + "f";
+        return String.format(format_string, value);
+    }
+
+    public static String double_to_str(double value) {
+        return double_to_str(value, 2);
+    }
+
+    public static String align_right(String str, int total_length) {
+        return String.format("%" + total_length + "s", str);
+    }
+
+    public static String align_left(String str, int total_length) {
+        return String.format("%-" + total_length + "s", str);
+    }
+
 }

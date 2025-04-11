@@ -16,6 +16,14 @@ public class Admin extends User {
         super(username, password_hash, email, full_name, address, phone_number, User.ROLE_ADMIN);
     }
 
+    public boolean canHaveMembership() {
+        return false; 
+    }
+
+    public boolean canTeachClass() {
+        return false; 
+    }
+
     // Implementing the abstract method from RoleBasedAccess interface
     @Override
     public void showUserMenu() {

@@ -9,6 +9,7 @@ import gym.users.UserDAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ArrayList;
 
 public abstract class MembershipDAO {
@@ -68,11 +69,11 @@ public abstract class MembershipDAO {
     }
 
     // get all memberships from the database
-    public static ArrayList<Membership> getAll(boolean exit_on_error) {
+    public static List<Membership> getAll(boolean exit_on_error) {
         DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
-        ArrayList<Membership> memberships = new ArrayList<>();
+        List<Membership> memberships = new ArrayList<>();
 
         try {
             ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_ALL_MEMBERSHIPS, exit_on_error);
@@ -93,16 +94,16 @@ public abstract class MembershipDAO {
     }
 
     // overloads to exit on any error
-    public static ArrayList<Membership> getAll() {
+    public static List<Membership> getAll() {
         return getAll(true);
     }
 
     // get all memberships by user ID from the database
-    public static ArrayList<Membership> getAllByUserId(int user_id, boolean exit_on_error) {
+    public static List<Membership> getAllByUserId(int user_id, boolean exit_on_error) {
         DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
-        ArrayList<Membership> memberships = new ArrayList<>();
+        List<Membership> memberships = new ArrayList<>();
 
         try {
             ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_MEMBERSHIPS_BY_USER_ID, exit_on_error);
@@ -124,7 +125,7 @@ public abstract class MembershipDAO {
     }
 
     // overloads to exit on any error
-    public static ArrayList<Membership> getAllByUserId(int user_id) {
+    public static List<Membership> getAllByUserId(int user_id) {
         return getAllByUserId(user_id, true);
     }
 

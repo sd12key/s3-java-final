@@ -2,6 +2,7 @@ package gym.users;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.ArrayList;
 
 import gym.database.DatabaseConnection;
@@ -129,11 +130,11 @@ public abstract class UserDAO {
     }
 
     // get all users from the database
-    public static ArrayList<User> getAllUsers(boolean exit_on_error) {
+    public static List<User> getAllUsers(boolean exit_on_error) {
         DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
-        ArrayList<User> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
         try {
             ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_ALL_USERS, exit_on_error);
@@ -155,7 +156,7 @@ public abstract class UserDAO {
     }
 
     // overload method to exit on any error
-    public static ArrayList<User> getAllUsers() {
+    public static List<User> getAllUsers() {
         return getAllUsers(true);
     }
 

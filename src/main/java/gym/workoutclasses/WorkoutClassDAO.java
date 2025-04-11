@@ -10,6 +10,7 @@ import gym.users.interfaces.RoleBasedAccess;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.ArrayList;
 
 public abstract class WorkoutClassDAO {
@@ -90,11 +91,11 @@ public abstract class WorkoutClassDAO {
         }
     }
 
-    public static ArrayList<WorkoutClass> getAll(boolean exit_on_error) {
+    public static List<WorkoutClass> getAll(boolean exit_on_error) {
         DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
-        ArrayList<WorkoutClass> classes = new ArrayList<>();
+        List<WorkoutClass> classes = new ArrayList<>();
 
         try {
             ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_ALL_WORKOUT_CLASSES, exit_on_error);
@@ -114,11 +115,11 @@ public abstract class WorkoutClassDAO {
         }
     }
 
-    public static ArrayList<WorkoutClass> getAllByTrainerId(int trainer_id, boolean exit_on_error) {
+    public static List<WorkoutClass> getAllByTrainerId(int trainer_id, boolean exit_on_error) {
         DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
         ResultSet rs = null;
-        ArrayList<WorkoutClass> classes = new ArrayList<>();
+        List<WorkoutClass> classes = new ArrayList<>();
 
         try {
             ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_WORKOUT_CLASSES_BY_TRAINER_ID, exit_on_error);
@@ -156,11 +157,11 @@ public abstract class WorkoutClassDAO {
         return deleteById(id, true);
     }
 
-    public static ArrayList<WorkoutClass> getAll() {
+    public static List<WorkoutClass> getAll() {
         return getAll(true);
     }
 
-    public static ArrayList<WorkoutClass> getAllByTrainerId(int trainer_id) {
+    public static List<WorkoutClass> getAllByTrainerId(int trainer_id) {
         return getAllByTrainerId(trainer_id, true);
     }
 

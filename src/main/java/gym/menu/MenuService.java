@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import gym.users.UserService;
+import gym.memberships.MembershipService;
 import gym.users.User;
 
 import gym.utilities.Utils;
@@ -172,12 +173,18 @@ public final class MenuService {
                 printReport(UserService.getUserDetailsReport(user_id), true);
                 break;
             case "4":
-                System.out.println("=== Choice 4 ===");
-                // code                    
+                // delete user account
+                print_info_message(user.getMenuItems()[3], '>');
                 break;
             case "5":
-                System.out.println("=== Choice 5 ===");                
-                // code                    
+                // view all memberships
+                print_info_message(user.getMenuItems()[4], '>');
+                printReport(MembershipService.getAllMembershipsReport(), true);
+                break;
+            case "6":
+                // view all memberships
+                print_info_message(user.getMenuItems()[5], '>');
+                printReport(MembershipService.getRevenueReport(), true);
                 break;
             default:
                 print_invalid_choice();

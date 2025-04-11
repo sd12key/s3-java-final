@@ -1,6 +1,8 @@
 package gym.memberships;
 
 import gym.users.User;
+import gym.utilities.Utils;
+
 import java.time.LocalDate;
 
 public class Membership {
@@ -80,11 +82,12 @@ public class Membership {
             status = "exp. " + expiration;
         }
     
-        return "Membership [" + this.id +
-                ", " + this.type.getUserRole() +
-                ", " + this.type.getType() + "] " +
-                this.user.getFullName() +
-                ", purchased " + this.purchase_date + "(" + status + ")";
+        return "[" + this.id +
+                ", " + Utils.FirstCharToUpperCase(this.type.getUserRole()) +
+                "/" + this.type.getType() + "/" + "$" + Utils.double_to_str(this.type.getCost()) + "] " +
+                this.user.getFullName() + "(id:" + this.user.getId() + ")" +
+                ", purchased " + this.purchase_date + " (" + status + ")";
     }
         
 }
+

@@ -1,5 +1,7 @@
 package gym.memberships;
 
+import gym.utilities.Utils;
+
 public class MembershipType {
     private int id;
     private String user_role;
@@ -38,6 +40,7 @@ public class MembershipType {
 
     @Override
     public String toString() {
-        return "[" + this.id + ":"+ this.user_role + "] " + this.type + " (" + this.duration_in_months + "m, $" + this.cost + ")";
+        return "[" + this.id + ":"+ this.user_role + "] " + this.type + 
+        " (" + this.duration_in_months + "m, " + Utils.double_to_str(this.cost) + ")";
     }
 }
