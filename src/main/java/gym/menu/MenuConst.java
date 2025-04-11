@@ -2,8 +2,8 @@ package gym.menu;
 
 public final class MenuConst {
     public static final int WIDTH_MENU_TITLE = 60;
-    public static final int OFFSET_MENU_TITLE = 10;
-    public static final int OFFSET_MENU_ITEMS = 25;
+    public static final int OFFSET_MENU_TITLE = 5;
+    public static final int OFFSET_MENU_ITEMS = 20;
 
     public static final String APP_WELCOME_MSG = "WELCOME TO GYM APP";
     public static final String MAIN_MENU = " MAIN MENU ";

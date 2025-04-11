@@ -47,6 +47,13 @@ public class Utils {
         print_title_message(message, message, message_length, symbol, offset, role);
     }
 
+    public static String FirstCharToUpperCase(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+    }
+
     // This method parses a CSV line and returns an array of strings.
     public static String[] parse_csv(String line) {
         List<String> csv_line_parts = new ArrayList<>();

@@ -1,5 +1,6 @@
 package gym.menu;
 
+import java.util.List;
 import java.util.Scanner;
 
 import gym.users.UserService;
@@ -153,10 +154,12 @@ public final class MenuService {
     public static void handleAdminMenu(User user, String choice) {
         switch (choice) {
             case "1":
-                System.out.println("=== Choice 1 ===");
-                // code
+                // view account info
+                print_info_message(user.getMenuItems()[0], '>');
+                printReport(UserService.getUserDetailsReport(user), true);
                 break;
             case "2":
+
                 System.out.println("=== Choice 2 ===");
                 // code                    
                 break;
@@ -181,8 +184,9 @@ public final class MenuService {
     public static void handleMemberMenu(User user, String choice) {
         switch (choice) {
             case "1":
-                System.out.println("=== Choice 1 ===");
-                // code
+                // view account info
+                print_info_message(user.getMenuItems()[0], '>');
+                printReport(UserService.getUserDetailsReport(user), true);
                 break;
             case "2":
                 System.out.println("=== Choice 2 ===");
@@ -205,8 +209,9 @@ public final class MenuService {
     public static void handleTrainerMenu(User user, String choice) {
         switch (choice) {
             case "1":
-                System.out.println("=== Choice 1 ===");
-                // code
+                // view account info
+                print_info_message(user.getMenuItems()[0], '>');
+                printReport(UserService.getUserDetailsReport(user), true);
                 break;
             case "2":
                 System.out.println("=== Choice 2 ===");
@@ -231,6 +236,27 @@ public final class MenuService {
                 System.out.println("Invalid choice.");
         }
     }
+
+    public static void printReport(List<String> lines, boolean wait_for_enter, String header) {
+        if (header != null) {
+            print_info_message(header, '-');
+        }
+        
+        lines.forEach(line -> 
+            System.out.println(Utils.add_offset_to_string(line, MenuConst.OFFSET_MENU_TITLE))
+        );
+        
+        if (wait_for_enter) {
+            System.out.print("\n" + Utils.add_offset_to_string("--> Press Enter to continue... ", 
+                MenuConst.OFFSET_MENU_TITLE));
+            scanner.nextLine();
+        }
+    }   
+
+    public static void printReport(List<String> lines, boolean wait_for_enter) {
+        printReport(lines, wait_for_enter, null);
+    }
+
 
 
 }
