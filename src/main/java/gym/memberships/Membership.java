@@ -70,24 +70,32 @@ public class Membership {
         return expirationDate != null && expirationDate.isBefore(LocalDate.now());
     }
 
-    @Override
-    public String toString() {
-        String status;
+    private String purchStatus() {
+        LocalDate now = LocalDate.now();
+        if (this.isExpired()) {
+            return "purchased";
+        }
+        return this.getPurchaseDate().isBefore(now) ? "started" : "starts";
+    }
+
+    private String expStatus() {
         LocalDate expiration = this.getExpirationDate();
         if (expiration == null) {
-            status = "exp.unknown";
+            return "exp.unknown";
         } else if (expiration.isBefore(LocalDate.now())) {
-            status = "expired";
+            return "expired";
         } else {
-            status = "exp. " + expiration;
+            return "exp. " + expiration;
         }
-    
-        return "[" + this.id +
-                ", " + Utils.firstCharToUpperCase(this.type.getUserRole()) +
-                "/" + this.type.getType() + "/" + "$" + Utils.double_to_str(this.type.getCost()) + "] " +
-                this.user.getFullName() + "(id:" + this.user.getId() + ")" +
-                ", purchased " + this.purchase_date + " (" + status + ")";
     }
-        
+
+    @Override
+    public String toString() {
+        return "(ID:" + this.id + ") " +
+                Utils.firstCharToUpperCase(this.type.getUserRole()) +
+                "/" + this.type.getType() + "/" + "$" + Utils.double_to_str(this.type.getCost()) + " - " +
+                this.user.getFullName() + " (UID:" + this.user.getId() + ")" +
+                ", " + this.purchStatus() + " " + this.purchase_date + " (" + this.expStatus() + ")";
+    }
 }
 

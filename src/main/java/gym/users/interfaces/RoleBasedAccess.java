@@ -55,9 +55,8 @@ public interface RoleBasedAccess {
         return null;
     }
 
-    // abstract void showUserMenu();
+    // Methods to be implemented by subclasses
     void showUserMenu();
     void handleMenuChoice(String choice);
-
     String[] getMenuItems(); 
 }

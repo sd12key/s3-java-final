@@ -106,6 +106,7 @@ public abstract class MembershipTypeDAO {
         try {
             ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_MEMBERSHIP_TYPE_BY_USER_ROLE, exit_on_error);
             DatabaseConnection.psSetString(ps, 1, role, exit_on_error);
+            // System.out.println(ps);
             rs = DatabaseConnection.executeQuery(ps, exit_on_error);
     
             List<MembershipType> types = new ArrayList<>();

@@ -31,7 +31,7 @@ public class SQLTemplates {
     "SELECT * FROM " + DBConst.MembershipTypes.TABLE + " WHERE " + DBConst.MembershipTypes.ID + " = ?";
 
     public static final String SQL_SELECT_MEMBERSHIP_TYPE_BY_USER_ROLE =
-    "SELECT * FROM " + DBConst.MembershipTypes.TABLE + " WHERE " + DBConst.MembershipTypes.USER_ROLE + " = ? + ORDER BY " + DBConst.MembershipTypes.ID;
+    "SELECT * FROM " + DBConst.MembershipTypes.TABLE + " WHERE " + DBConst.MembershipTypes.USER_ROLE + " = ? ORDER BY " + DBConst.MembershipTypes.ID;
     
     public static final String SQL_SELECT_ALL_MEMBERSHIP_TYPES =
     "SELECT * FROM " + DBConst.MembershipTypes.TABLE + " ORDER BY " + DBConst.MembershipTypes.ID;
@@ -155,6 +155,10 @@ public class SQLTemplates {
     public static final String SQL_SELECT_ALL_WORKOUT_CLASSES =
         "SELECT * FROM " + DBConst.WorkoutClasses.TABLE + 
         " ORDER BY " + DBConst.WorkoutClasses.ID;
+
+    public static final String SQL_SELECT_WORKOUT_CLASS_BY_ID =
+        "SELECT * FROM " + DBConst.WorkoutClasses.TABLE + 
+        " WHERE " + DBConst.WorkoutClasses.ID + " = ?";             
 
     public static final String SQL_SELECT_WORKOUT_CLASSES_BY_TRAINER_ID =
         "SELECT * FROM " + DBConst.WorkoutClasses.TABLE + 

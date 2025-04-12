@@ -58,7 +58,7 @@ public abstract class WorkoutClassDAO {
         }
     }
 
-    public static boolean updateById(WorkoutClass workout_class, boolean exit_on_error) {
+    public static boolean updateWorkoutClass(WorkoutClass workout_class, boolean exit_on_error) {
         DatabaseConnection.getConnection(exit_on_error);
         PreparedStatement ps = null;
 
@@ -87,6 +87,29 @@ public abstract class WorkoutClassDAO {
             int rows_deleted = DatabaseConnection.executeUpdate(ps, exit_on_error);
             return rows_deleted > 0;
         } finally {
+            DatabaseConnection.closeStatement(ps, exit_on_error);
+        }
+    }
+
+    public static WorkoutClass getById(int id, boolean exit_on_error) {
+        DatabaseConnection.getConnection(exit_on_error);
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = DatabaseConnection.prepareStatement(SQLTemplates.SQL_SELECT_WORKOUT_CLASS_BY_ID, exit_on_error);
+            DatabaseConnection.psSetInt(ps, 1, id, exit_on_error);
+            rs = DatabaseConnection.executeQuery(ps, exit_on_error);
+
+            WorkoutClass wc = null;
+            if (DatabaseConnection.rsNext(rs, exit_on_error)) {
+                wc = buildFromResultSet(rs, exit_on_error);
+            } 
+
+            return wc;
+
+        } finally {
+            DatabaseConnection.closeResultSet(rs, exit_on_error);
             DatabaseConnection.closeStatement(ps, exit_on_error);
         }
     }
@@ -149,8 +172,8 @@ public abstract class WorkoutClassDAO {
         return addNewReturnId(wc, true);
     }
 
-    public static boolean updateById(WorkoutClass wc) {
-        return updateById(wc, true);
+    public static boolean updateWorkoutClass(WorkoutClass wc) {
+        return updateWorkoutClass(wc, true);
     }
 
     public static boolean deleteById(int id) {

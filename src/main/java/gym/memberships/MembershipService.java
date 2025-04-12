@@ -9,6 +9,10 @@ import gym.utilities.Utils;
 
 public class MembershipService {
 
+    public static boolean addNewMembership(Membership membership) {
+        return MembershipDAO.addNew(membership, true);
+    }
+
     public static List<Membership> getMembershipsByUser(User user) {
         return MembershipDAO.getAllByUserId(user.getId());
     }
@@ -161,6 +165,56 @@ public class MembershipService {
 
         return report;
     }
+    
+    // Get active memberships by user
+    public static List<Membership> getActiveMembershipsByUser(User user) {
+        List<Membership> memberships = getMembershipsByUser(user);
+        List<Membership> active_memberships = new ArrayList<>();
+        for (Membership membership : memberships) {
+            if (!membership.isExpired()) {
+                active_memberships.add(membership);
+            }
+        }
+        return active_memberships;
+    }
+
+    public static List<String> getMembershipsAndExpencesReport(User user){
+        List<String> report = new ArrayList<>();
+        List<Membership> memberships = getMembershipsByUser(user);
+        if (memberships == null || memberships.isEmpty()) {
+            report.add(">>> No memberships found");
+            return report;
+        }
+        report.add(">>> Memberships:");
+        for (Membership membership : memberships) {
+            report.add(membership.toString());
+        }
+        report.add(" ");
+        
+        // Calculate total revenue from memberships list
+        double[] totals = calculateMembershipTotals(memberships);
+        int[] counts = calculateMembershipCounts(memberships);
+        double active_expences = totals[0];
+        double expired_expences = totals[1];
+        double total_expences = active_expences + expired_expences;
+        int active_num = counts[0];
+        int exp_num = counts[1];
+        int total_num = active_num + exp_num;
+
+        int num_len = 10;
+        // Add total earnings up to date
+        String grand_total_str = ">>> Total Expences as of " + LocalDate.now() + " (" + total_num + "): ";
+        int align_to = grand_total_str.length() + 4;
+        report.add("==> " + grand_total_str + Utils.align_right("$" + Utils.double_to_str(total_expences), num_len));
+
+        report.add(Utils.align_right("Incl. Active (" + active_num + "): ", align_to) 
+            + Utils.align_right("$" + Utils.double_to_str(active_expences), num_len));
+        report.add(Utils.align_right("Inactive (" + exp_num + "): ", align_to) 
+            + Utils.align_right("$" + Utils.double_to_str(expired_expences), num_len));
+        
+        return report;
+    }
+
 
     // Calculate total revenue from memberships list
     public static double[] calculateMembershipTotals(List<Membership> memberships) {
@@ -189,5 +243,7 @@ public class MembershipService {
         }
         return new int[] {activeCount, expiredCount};    
     }
+
+
 
 }
