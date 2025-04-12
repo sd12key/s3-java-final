@@ -51,7 +51,7 @@ public class DatabaseInitializer {
 
         if (initialize_from_csv) {
             // If --drop and --init are both specified, initialize from CSV files
-            System.out.println("--> Initializing database from CSV files...\n");
+            System.out.println("--> Initializing database from CSV files...");
             try {
                 loadUsersFromCSV(CSV_FOLDER.resolve(CSV_FILES[0]));
                 loadMembershipTypesFromCSV(CSV_FOLDER.resolve(CSV_FILES[1]));
@@ -63,27 +63,31 @@ public class DatabaseInitializer {
             }
             System.out.println("--> Imported all CSV files successfully!\n");
 
-            } else {
-            // initializing just membership_types table with default values
-            for (Object[] row : DBConst.MEMBERSHIP_TYPES_DATA) {
-                String user_role = (String) row[0];
-                String type = (String) row[1];
-                String description = (String) row[2];
-                int duration = (int) row[3];
-                double cost = (double) row[4];
+            } 
+            
+            if (DatabaseConnection.isTableEmpty(DBConst.MembershipTypes.TABLE)) {
+            // initializing just membership_types table with default values if Table is empty
+                for (Object[] row : DBConst.MEMBERSHIP_TYPES_DATA) {
+                    String user_role = (String) row[0];
+                    String type = (String) row[1];
+                    String description = (String) row[2];
+                    int duration = (int) row[3];
+                    double cost = (double) row[4];
 
-                MembershipType mt = new MembershipType(user_role, type, description, duration, cost);
-                System.out.println("Adding membership type: " + mt.toString());
-                MembershipTypeDAO.addNew(mt);
-            }
+                    MembershipType mt = new MembershipType(user_role, type, description, duration, cost);
+                    // System.out.println("Adding membership type: " + mt.toString());
+                    MembershipTypeDAO.addNew(mt);
+                }
             System.out.println("--> Initialized membership_types table with default values!\n");
+            // check
+            List<MembershipType> types = MembershipTypeDAO.getAll();
+            String sStr = Utils.symbol_line(' ', 10);
+            System.out.println(sStr + "= Default Membership Types in the Database =");
+            for (MembershipType mt : types) {
+                System.out.println(sStr + mt);
+            }
+            System.out.println(sStr + "============================================\n");
         } 
-
-        List<MembershipType> types = MembershipTypeDAO.getAll();
-        System.out.println("=== All Membership Types in the Database ===");
-        for (MembershipType mt : types) {
-            System.out.println(mt);
-        }
     }
 
     private static void createTables() {
@@ -94,7 +98,7 @@ public class DatabaseInitializer {
         DatabaseConnection.executeStatement(stmt, SQLTemplates.SQL_CREATE_MEMBERSHIPS_TABLE);
         DatabaseConnection.executeStatement(stmt, SQLTemplates.SQL_CREATE_WORKOUT_CLASSES_TABLE);
         DatabaseConnection.closeStatement(stmt);
-        System.out.println("--> Created all tables successfully!\n");
+        // System.out.println("--> Created all tables successfully!\n");
     }
 
     private static void dropTables() {
@@ -133,11 +137,7 @@ public class DatabaseInitializer {
                 if (added_md_id == -1) {
                     System.err.println("Failed to add membership type: " + mt.toString());
                     System.exit(99);
-                } else {
-                    // Print the added membership type
-                    mt.setId(added_md_id);
-                    System.out.println("Added membership type: " + mt.toString());
-                }
+                } 
             }
         } catch (Exception e) {
             System.err.println("Error loading membership types from CSV: " + e.getMessage());
@@ -186,10 +186,7 @@ public class DatabaseInitializer {
             if (added_user_id == -1) {
                 System.err.println("Failed to add user: " + user.toString());
                 System.exit(99);
-            } else {
-                // Print the added user
-                System.out.println("Added user: [" + added_user_id + "] " + user.toStringNoId());
-            }
+            } 
         }
         } catch (Exception e) {
             System.err.println("Error loading users from CSV: " + e.getMessage());
@@ -215,7 +212,7 @@ public class DatabaseInitializer {
                 String line = scanner.nextLine();
                 String[] parts = Utils.parse_csv(line);
 
-                System.out.println(parts.length + " parts: " + line);
+                // System.out.println(parts.length + " parts: " + line);
                 if (parts.length < 3) continue;
 
                 // Parse CSV fields
@@ -237,13 +234,11 @@ public class DatabaseInitializer {
 
                 // create membership object and add to database
                 Membership membership = new Membership(type, user, purchase_date);
-                System.out.println("Adding membership: " + membership.toString());
+                // System.out.println("Adding membership: " + membership.toString());
                 if (!MembershipDAO.addNew(membership)) {
                     System.err.println("Failed to add membership: " + membership.toString());
                     System.exit(99);
-                } else {
-                    System.out.println("Added membership: " + membership.toString());
-                }
+                } 
             }
         } catch (Exception e) {
             System.err.println("Error loading memberships from CSV: " + e.getMessage());
@@ -269,7 +264,7 @@ public class DatabaseInitializer {
                 String line = scanner.nextLine();
                 String[] parts = Utils.parse_csv(line);
 
-                System.out.println(parts.length + " parts: " + line);
+                // System.out.println(parts.length + " parts: " + line);
                 if (parts.length < 3) continue;
 
                 // Parse CSV fields
@@ -290,14 +285,11 @@ public class DatabaseInitializer {
 
                 // create workout class object and add to database
                 WorkoutClass workoutClass = new WorkoutClass(type, description, trainer);
-                System.out.println("Adding workout class: " + workoutClass.toString());
+                // System.out.println("Adding workout class: " + workoutClass.toString());
                 if(!WorkoutClassDAO.addNew(workoutClass)) {
                     System.err.println("Failed to add workout class: " + workoutClass.toString());
                     System.exit(99);
-                } else {
-                    System.out.println("Added workout class: " + workoutClass.toString());
-                }
-
+                } 
             }
         } catch (Exception e) {
             System.err.println("Error loading workout classes from CSV: " + e.getMessage());

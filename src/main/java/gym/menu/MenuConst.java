@@ -48,4 +48,17 @@ public final class MenuConst {
         "(8) View Membership/Expenses",        
         "(0) Logout"
     };
+
+    // Regex patterns for various inputs
+    public static final String REGEX_USERNAME = "^[a-zA-Z][a-zA-Z0-9_-]*$";;
+    public static final String REGEX_PASSWORD = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).{8,}$";
+    public static final String REGEX_FULL_NAME = "^[\\p{L} .'-]+$";
+    public static final String REGEX_ADDRESS = "^[\\p{L}0-9\\-\\.,#'/ ]+$";
+    public static final String REGEX_EMAIL = "^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$";
+    public static final String REGEX_NON_EMPTY = "^.+$";
+    public static final String REGEX_PHONE_10_DIGIT = "^\\d{10}$";
+    public static final String REGEX_CREDIT_CARD_NUMBER = "^\\d{16}$";
+    public static final String REGEX_CREDIT_CARD_EXP = "^(0[1-9]|1[0-2])/\\d{2}$";
+    public static final String REGEX_CREDIT_CARD_CVV = "^\\d{3}$";
+    
 }

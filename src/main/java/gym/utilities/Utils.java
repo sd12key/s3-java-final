@@ -6,6 +6,19 @@ import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class Utils {
+
+    // Regex patterns for various inputs
+    public static final String REGEX_USERNAME = "^[a-zA-Z][a-zA-Z0-9_-]*$";;
+    public static final String REGEX_PASSWORD = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).{8,}$";
+    public static final String REGEX_FULL_NAME = "^[\\p{L} .'-]+$";
+    public static final String REGEX_ADDRESS = "^[\\p{L}0-9\\-\\.,#'/ ]+$";
+    public static final String REGEX_EMAIL = "^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$";
+    public static final String REGEX_NON_EMPTY = "^.+$";
+    public static final String REGEX_PHONE_10_DIGIT = "^\\d{10}$";
+    public static final String REGEX_MMYY_DATE = "^(0[1-9]|1[0-2])/\\d{2}$";
+    public static final String REGEX_CREDIT_CARD = "^\\d{16}$";
+    public static final String REGEX_CVV = "^\\d{3}$";
+
     // This method takes a string and a length, and returns the string centered within the specified length.
     // If the string is longer than the specified length, it truncates the string to fit.
     public static String center_string(String str, int length) {

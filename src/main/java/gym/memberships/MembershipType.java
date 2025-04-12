@@ -40,7 +40,13 @@ public class MembershipType {
 
     @Override
     public String toString() {
-        return "[" + this.id + ":"+ this.user_role + "] " + this.type + 
-        " (" + this.duration_in_months + "m, " + Utils.double_to_str(this.cost) + ")";
+        return "[MTID:" + this.id + "/"+ this.user_role + "] " + this.type + 
+        " (" + this.duration_in_months + "m, $" + Utils.double_to_str(this.cost) + ")";
+
     }
+
+    public String toStringNoId() {
+        return "(" + this.user_role + "/" + this.type + ") $" + Utils.double_to_str(this.cost) + " " + this.description;
+    }
+        
 }

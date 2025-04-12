@@ -3,6 +3,7 @@ package gym.menu;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import gym.users.UserService;
 import gym.memberships.Membership;
@@ -13,7 +14,6 @@ import gym.workoutclasses.WorkoutClass;
 import gym.workoutclasses.WorkoutClassService;
 import gym.users.User;
 import gym.users.childclasses.Trainer;
-
 
 import gym.utilities.Utils;
 
@@ -132,9 +132,9 @@ public final class MenuService {
         String error_msg = "<!> Invalid Credentials, please try again.";
         String cancel_msg = "<!> Login Procedure cancelled.";
 
-        String username = InputService.getValidatedInput(
+        String username = MenuService.getValidatedInput(
             scanner,
-            InputService.REGEX_NON_EMPTY,
+            MenuConst.REGEX_NON_EMPTY,
             sStr + "    Enter Username: ",
             sStr + "<!> Invalid Username, try again, or enter -1 to abort.",
             false
@@ -148,9 +148,9 @@ public final class MenuService {
             return null;
         }
 
-        String password = InputService.getValidatedInput(
+        String password = MenuService.getValidatedInput(
             scanner,
-            InputService.REGEX_NON_EMPTY,
+            MenuConst.REGEX_NON_EMPTY,
             sStr + "    Enter Password: ",
             sStr + "<!> Invalid Password, try again, or enter -1 to abort.",
             false
@@ -302,9 +302,9 @@ public final class MenuService {
         String username = null;
 
         do {
-            username = InputService.getValidatedInput(
+            username = MenuService.getValidatedInput(
                 scanner,
-                InputService.REGEX_USERNAME,
+                MenuConst.REGEX_USERNAME,
                 sStr + "    Enter Username: ",
                 sStr + "<!> Invalid Username; only letters, numbers and '_-' are allowed.",
                 false
@@ -322,9 +322,9 @@ public final class MenuService {
             }
         } while (!unique_username);
 
-        String password = InputService.getValidatedInput(
+        String password = MenuService.getValidatedInput(
             scanner,
-            InputService.REGEX_SIMPLE_PASSWORD,
+            MenuConst.REGEX_PASSWORD,
             sStr + "    Enter Password: ",
             sStr + "<!> At least 8 characters, 1 upper, 1 lowercase, 1 digit.",
             false
@@ -338,9 +338,9 @@ public final class MenuService {
 
         String password_hash = Utils.hash_password(password);       
 
-        String full_name = InputService.getValidatedInput(
+        String full_name = MenuService.getValidatedInput(
             scanner,
-            InputService.REGEX_FULL_NAME,
+            MenuConst.REGEX_FULL_NAME,
             sStr + "    Enter Full Name: ",
             error_msg,
             false
@@ -352,9 +352,9 @@ public final class MenuService {
             return;
         }
 
-        String address = InputService.getValidatedInput(
+        String address = MenuService.getValidatedInput(
             scanner,
-            InputService.REGEX_SIMPLE_ADDRESS,
+            MenuConst.REGEX_ADDRESS,
             sStr + "    Enter Full Address: ",
             error_msg,
             false
@@ -366,9 +366,9 @@ public final class MenuService {
             return;
         }
 
-        String phone = InputService.getValidatedInput(
+        String phone = MenuService.getValidatedInput(
             scanner,
-            InputService.REGEX_PHONE_10_DIGIT,
+            MenuConst.REGEX_PHONE_10_DIGIT,
             sStr + "    Enter Phone: ",
             sStr + "<!> Phone number must be 10-digits.",
             false
@@ -380,9 +380,9 @@ public final class MenuService {
             return;
         }
         
-        String email = InputService.getValidatedInput(
+        String email = MenuService.getValidatedInput(
             scanner,
-            InputService.REGEX_EMAIL,
+            MenuConst.REGEX_EMAIL,
             sStr + "    Enter Email: ",
             sStr + "<!> Invalid email format, please try again.",
             false
@@ -408,7 +408,7 @@ public final class MenuService {
 
 
     public static void showUserInformation() {
-        int user_id = enterId("Enter User ID to View Account Info");
+        int user_id = enterId("Enter User ID (UID) to View Account Info");
         if (user_id == 0) { return; }
         System.out.println();
         User fetch_user = UserService.getUser(user_id);
@@ -475,9 +475,9 @@ public final class MenuService {
             String cancel_msg = "<!> Workout Class update cancelled.";
             
             System.out.println(Utils.add_offset_to_string("--> Workout Class Type: " + fetch_class.getType(), MenuConst.OFFSET_MENU_TITLE));
-            String type = InputService.getValidatedInput(
+            String type = MenuService.getValidatedInput(
                 scanner,
-                InputService.REGEX_NON_EMPTY,
+                MenuConst.REGEX_NON_EMPTY,
                 sStr + "    New Class Type (Enter = Unchanged): ",
                 error_msg,
                 true
@@ -495,9 +495,9 @@ public final class MenuService {
             }
 
             System.out.println(Utils.add_offset_to_string("--> Workout Class Description: " + fetch_class.getDescription(), MenuConst.OFFSET_MENU_TITLE));
-            String desc = InputService.getValidatedInput(
+            String desc = MenuService.getValidatedInput(
                 scanner,
-                InputService.REGEX_NON_EMPTY,
+                MenuConst.REGEX_NON_EMPTY,
                 sStr + "    New Description (Enter = Unchanged): ",
                 error_msg,
                 true
@@ -547,9 +547,9 @@ public final class MenuService {
         String error_msg = sStr + "<!> Invalid input. Please try again. -1 to cancel.";
         String cancel_msg = "<!> Workout Class creation cancelled.";
         
-        String type = InputService.getValidatedInput(
+        String type = MenuService.getValidatedInput(
             scanner,
-            InputService.REGEX_NON_EMPTY,
+            MenuConst.REGEX_NON_EMPTY,
             sStr + "Enter Workout Class Type: ",
             error_msg,
             false
@@ -561,9 +561,9 @@ public final class MenuService {
             return;
         }
 
-        String desc = InputService.getValidatedInput(
+        String desc = MenuService.getValidatedInput(
             scanner,
-            InputService.REGEX_NON_EMPTY,
+            MenuConst.REGEX_NON_EMPTY,
             sStr + "Enter Class Description: ",
             error_msg,
             false
@@ -695,7 +695,7 @@ public final class MenuService {
         
         // Display selected membership info
         System.out.println(sStr + ">>> Membership selected:");
-        System.out.println(sStr + selected_membership.toString());  // Assuming `toString()` provides the desired details
+        System.out.println(sStr + "    " + selected_membership.toStringNoId());  
         
         // Check if user already has an active membership
         List<Membership> active_memberships = MembershipService.getActiveMembershipsByUser(user);
@@ -714,20 +714,20 @@ public final class MenuService {
         }        
 
         // Ask for credit card info
-        String card_info = InputService.enterCreditCardInfo(scanner);
+        String card_info = enterCreditCardInfo();
         // returns null if user cancels
         if (card_info == null) {
-            System.out.println(Utils.add_offset_to_string("sStr + <!> Membership purchase canceled.", MenuConst.OFFSET_MENU_TITLE));
+            System.out.println(Utils.add_offset_to_string( "<!> Membership purchase canceled.", MenuConst.OFFSET_MENU_TITLE));
             wait_for_enter();
             return;
         }
 
-        System.out.println(Utils.add_offset_to_string("<i> " + card_info, MenuConst.OFFSET_MENU_TITLE));
+        System.out.println(Utils.add_offset_to_string("<i> " + card_info + "\n", MenuConst.OFFSET_MENU_TITLE));
 
         // Final confirmation for purchase
-        boolean confirm_purchase = confirm_action("sStr + ==> Are you sure you want to purchase this membership? (y/n): ");
+        boolean confirm_purchase = confirm_action(sStr + "==> Are you sure you want to purchase this membership? (y/n): ");
         if (!confirm_purchase) {
-            System.out.println(Utils.add_offset_to_string("sStr + --> Membership purchase canceled.", MenuConst.OFFSET_MENU_TITLE));
+            System.out.println(Utils.add_offset_to_string("--> Membership purchase canceled.", MenuConst.OFFSET_MENU_TITLE));
             return;
         }
 
@@ -753,6 +753,40 @@ public final class MenuService {
         }
 
         wait_for_enter();
+    }
+
+    public static String enterCreditCardInfo() {
+        String sStr = Utils.symbol_line(' ', MenuConst.OFFSET_MENU_TITLE);
+        String error_msg = sStr + "<!> Invalid input. Please try again. -1 to cancel.";
+
+        String card_number = getValidatedInput(
+            scanner,
+            MenuConst.REGEX_CREDIT_CARD_NUMBER,
+            sStr + "==> Enter Credit Card Number (16-digits): ",
+            error_msg,
+            false
+        );
+        if (card_number == null) { return null; }
+
+        String card_expiration = getValidatedInput(
+            scanner,
+            MenuConst.REGEX_CREDIT_CARD_EXP,
+            sStr + "==> Enter Expiration (MM/YY): ",
+            error_msg,
+            false
+        );
+        if (card_expiration == null) { return null; }
+
+        String card_cvv = getValidatedInput(
+            scanner,
+            MenuConst.REGEX_CREDIT_CARD_CVV,
+            sStr + "==> Enter Card CVV Code (3-digits): ",
+            error_msg,
+            false
+        );
+        if (card_cvv == null) { return null; }
+
+        return "Card " + "**** **** **** " + card_number.substring(card_number.length() - 4) + ", Exp. " + card_expiration + ", CVV ***";
     }
 
     public static void print_choice_name(User user, String choice) {
@@ -810,6 +844,38 @@ public final class MenuService {
         System.out.print(Utils.add_offset_to_string(prompt, MenuConst.OFFSET_MENU_TITLE));
         String confirm = scanner.nextLine().trim();
         return "y".equalsIgnoreCase(confirm);
+    }
+    
+    public static String getValidatedInput(Scanner scanner,
+                                         String regex_pattern,
+                                         String prompt,
+                                         String error_prompt,
+                                         boolean enter_allowed) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            
+            // Handle empty input
+            if (input.isEmpty()) {
+                if (enter_allowed) {
+                    return "-1";
+                }
+                System.out.println(error_prompt);
+                continue;
+            }
+            
+            // Handle cancellation
+            if (input.equals("-1")) {
+                return null;
+            }
+            
+            // Validate pattern
+            if (Pattern.matches(regex_pattern, input)) {
+                return input;
+            }
+
+            System.out.println(error_prompt);
+        }
     }
 
 

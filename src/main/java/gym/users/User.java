@@ -105,7 +105,7 @@ public abstract class User implements RoleBasedAccess {
 
     @Override
     public String toString() {
-        return "[" + this.id + ", " + Utils.firstCharToUpperCase(this.role) + "]: " + 
+        return "[UID:" + this.id + "/" + Utils.firstCharToUpperCase(this.role) + "]: " + 
         this.username + " (" + this.full_name + ", " + this.email + ")";
     }
 

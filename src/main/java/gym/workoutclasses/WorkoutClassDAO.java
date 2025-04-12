@@ -6,7 +6,6 @@ import gym.database.DBConst;
 import gym.users.User;
 import gym.users.UserDAO;
 import gym.users.childclasses.Trainer;
-import gym.users.interfaces.RoleBasedAccess;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -198,21 +197,17 @@ public abstract class WorkoutClassDAO {
         // get user object for trainer_id
         User user_by_id = UserDAO.getById(trainer_id, exit_on_error);
 
-        // casting to Trainer
-        Trainer trainer = RoleBasedAccess.castToRole(user_by_id, Trainer.class);
-
-        if (trainer == null) {
+        if (user_by_id == null || user_by_id.getRole() != User.ROLE_TRAINER) {
             if (exit_on_error) {
-                String error_msg = (user_by_id == null) 
+                String errorMsg = user_by_id == null 
                     ? "Trainer not found for WorkoutClass ID: " + id
                     : "User is not a trainer for WorkoutClass ID: " + id;
-                System.err.println(error_msg);
+                System.err.println(errorMsg);
                 System.exit(99);
             }
             return null;
         }
-
-        return new WorkoutClass(id, type, description, trainer);
+        return new WorkoutClass(id, type, description, (Trainer) user_by_id);
     }
 
     // overload method to exit on any error

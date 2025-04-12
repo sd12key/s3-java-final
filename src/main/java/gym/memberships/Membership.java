@@ -75,9 +75,9 @@ public class Membership {
         if (this.isExpired()) {
             return "purchased";
         }
-        return this.getPurchaseDate().isBefore(now) ? "started" : "starts";
+        return this.getPurchaseDate().isAfter(now) ? "starts" : "started";
     }
-
+    
     private String expStatus() {
         LocalDate expiration = this.getExpirationDate();
         if (expiration == null) {
@@ -91,7 +91,7 @@ public class Membership {
 
     @Override
     public String toString() {
-        return "(ID:" + this.id + ") " +
+        return "(MID:" + this.id + ") " +
                 Utils.firstCharToUpperCase(this.type.getUserRole()) +
                 "/" + this.type.getType() + "/" + "$" + Utils.double_to_str(this.type.getCost()) + " - " +
                 this.user.getFullName() + " (UID:" + this.user.getId() + ")" +
