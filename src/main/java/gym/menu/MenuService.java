@@ -709,8 +709,10 @@ public final class MenuService {
         }
         
         if (last_active_membership != null) {
+            System.out.println();
             System.out.println(sStr + "==> You already have an active membership ending " + last_active_membership.getExpirationDate());
             System.out.println(sStr + "<i> Your new membership will start on the next day: " + last_active_membership.getExpirationDate().plusDays(1));
+            System.out.println();
         }        
 
         // Ask for credit card info
