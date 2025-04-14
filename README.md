@@ -7,7 +7,7 @@ A Java application for gym management built with Maven.
 
 - **Java 21 JDK** ([Download](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html))
 - **Maven** ([Download](https://maven.apache.org/download.cgi))
-- **PostgreSQL** (optional, if using database features)
+- **PostgreSQL** 
 
 ## Installation
 
