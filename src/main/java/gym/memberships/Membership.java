@@ -6,7 +6,7 @@ import gym.utilities.Utils;
 import java.time.LocalDate;
 
 public class Membership {
-    private int id;
+    private final int id;
     private MembershipType type;
     private User user;
     private LocalDate purchase_date;
@@ -42,10 +42,6 @@ public class Membership {
     }
 
     // Setters
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setType(MembershipType type) {
         this.type = type;
     }

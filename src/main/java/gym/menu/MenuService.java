@@ -637,9 +637,14 @@ public final class MenuService {
             boolean delete_confirmed = confirm_action("==> Are you sure you want to delete this user? (y/n): ");
             boolean delete_confirmed2 = false;
             // confirm one more if user has memberships or classes
-            if (delete_confirmed && (total_count > 0 || class_count > 0)) {
-                System.out.println(Utils.add_offset_to_string("<!> This user has memberships and/or classes. All information will be lost on deletion!", MenuConst.OFFSET_MENU_TITLE));
-                delete_confirmed2 = confirm_action("==> Are you sure you want to delete this user? (y/n): ");
+            if (delete_confirmed) {
+                if ((total_count > 0 || class_count > 0)) {
+                    System.out.println(Utils.add_offset_to_string("<!> This user has memberships and/or classes. All information will be lost on deletion!", MenuConst.OFFSET_MENU_TITLE));
+                    delete_confirmed2 = confirm_action("==> Are you sure you want to delete this user? (y/n): ");
+                }
+                else {
+                    delete_confirmed2 = true;
+                }
             }
             // now we had two confirmations, so we can delete the user
             if (delete_confirmed && delete_confirmed2) {

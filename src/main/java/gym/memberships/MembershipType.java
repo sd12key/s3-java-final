@@ -3,7 +3,7 @@ package gym.memberships;
 import gym.utilities.Utils;
 
 public class MembershipType {
-    private int id;
+    private final int id;
     private String user_role;
     private String type;
     private String description;
@@ -34,9 +34,6 @@ public class MembershipType {
     public String getDescription() { return description; }
     public int getDurationInMonths() { return duration_in_months; }
     public double getCost() { return cost; }
-
-    // Setters
-    public void setId(int id) { this.id = id; }
 
     @Override
     public String toString() {

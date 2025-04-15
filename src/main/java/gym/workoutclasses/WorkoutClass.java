@@ -4,7 +4,7 @@ import gym.users.childclasses.Trainer;
 
 public class WorkoutClass {
 
-    private int id;
+    private final int id;
     private String type;
     private String description;
     private Trainer trainer;
@@ -39,10 +39,6 @@ public class WorkoutClass {
     }
 
     // Setters
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setType(String type) {
         this.type = type;
     }
